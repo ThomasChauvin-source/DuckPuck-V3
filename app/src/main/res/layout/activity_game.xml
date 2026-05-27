@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Ce layout est volontairement minimal : GameView occupe tout l'écran.
+    Le SurfaceView gère lui-même le rendu du jeu.
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/game_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!--
+        GameView est ajouté programmatiquement dans GameActivity.onCreate()
+        via setContentView(gameView).
+        Ce fichier XML est fourni à titre indicatif si vous préférez
+        l'inflater manuellement et y insérer la vue.
+    -->
+
+</FrameLayout>
