@@ -1,160 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Arrière-plan image -->
     <ImageView
-        android:id="@+id/imageView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/chatgpt_image_18_mai_2026__15_13_41" />
 
+    <!-- Layout principal : menu gauche + contenu droit -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:paddingLeft="60dp"
-        android:paddingRight="60dp"
-        android:paddingTop="40dp"
-        android:paddingBottom="40dp">
+        android:padding="40dp">
 
-        <!-- Conteneur des 3 colonnes égales -->
+        <!-- ══════════════════════════════
+             COLONNE GAUCHE — MENU FIXE
+             ══════════════════════════════ -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/menuLateral"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="3">
+            android:layout_weight="1"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_menu_border"
+            android:elevation="6dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp">
 
-            <!-- ════════════════════════════════════════════════
-                 COLONNE 1 — MENU LATÉRAL
-                 ════════════════════════════════════════════════ -->
-            <LinearLayout
-                android:id="@+id/menuLateral"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+            <Button
+                android:id="@+id/btnJouer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@drawable/bg_menu_border"
-                android:padding="8dp"
-                android:layout_marginEnd="10dp"
-                android:elevation="6dp">
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="#2196F3"
+                android:fontFamily="serif"
+                android:text="Jouer"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
 
-                <Button
-                    android:id="@+id/btnJouer"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginBottom="5dp"
-                    android:text="Jouer"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:fontFamily="serif"
-                    android:backgroundTint="#2196F3" />
-
-                <Button
-                    android:id="@+id/btnAjouterJoueur"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginBottom="5dp"
-                    android:text="Ajouter un joueur"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:fontFamily="serif"
-                    android:backgroundTint="#C8A84B" />
-
-                <Button
-                    android:id="@+id/btnHistorique"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginBottom="5dp"
-                    android:text="Historique des parties"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:fontFamily="serif"
-                    android:backgroundTint="#C8A84B" />
-
-                <Button
-                    android:id="@+id/btnStatistiques"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginBottom="5dp"
-                    android:text="Statistiques"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:fontFamily="serif"
-                    android:backgroundTint="#C8A84B" />
-
-                <Button
-                    android:id="@+id/btnParametres"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="Paramètres"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:fontFamily="serif"
-                    android:backgroundTint="#2196F3" />
-
-            </LinearLayout>
-
-            <!-- ════════════════════════════════════════════════
-                 COLONNE 2 — CARTE 1 VS 1
-                 ════════════════════════════════════════════════ -->
-            <FrameLayout
-                android:id="@+id/carte1v1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginEnd="10dp"
+            <Button
+                android:id="@+id/btnAjouterJoueur"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="#009688"
-                android:padding="6dp">
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="#C8A84B"
+                android:fontFamily="serif"
+                android:text="Ajouter un joueur"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
 
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="1 V 1"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:fontFamily="serif" />
-            </FrameLayout>
-
-            <!-- ════════════════════════════════════════════════
-                 COLONNE 3 — CARTE 2 VS 2
-                 ════════════════════════════════════════════════ -->
-            <FrameLayout
-                android:id="@+id/carte2v2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+            <Button
+                android:id="@+id/btnHistorique"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="#009688"
-                android:padding="6dp">
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="#C8A84B"
+                android:fontFamily="serif"
+                android:text="Historique des parties"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
 
-                <TextView
-                    android:id="@+id/textView11"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="2 V 2"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:fontFamily="serif" />
-            </FrameLayout>
+            <Button
+                android:id="@+id/btnStatistiques"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="#C8A84B"
+                android:fontFamily="serif"
+                android:text="Statistiques"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/btnParametres"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:backgroundTint="#2196F3"
+                android:fontFamily="serif"
+                android:text="Paramètres"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
 
         </LinearLayout>
 
-    </LinearLayout>
+        <!-- ══════════════════════════════
+             COLONNE DROITE — CONTENU
+             ══════════════════════════════ -->
+        <FrameLayout
+            android:id="@+id/fragmentContainerView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
 
+    </LinearLayout>
 </FrameLayout>

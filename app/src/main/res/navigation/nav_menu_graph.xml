@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/menuFragment">
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.duckpuck.MenuFragment">
+
+        <action
+            android:id="@+id/action_menu_to_jouer"
+            app:destination="@id/jouerFragment" />
+
+        <action
+            android:id="@+id/action_menu_to_stats"
+            app:destination="@id/statistiquesFragment" />
+
+        <action
+            android:id="@+id/action_menu_to_historique"
+            app:destination="@id/historiqueFragment" />
+
+        <action
+            android:id="@+id/action_menu_to_parametres"
+            app:destination="@id/parametresFragment" />
+
+        <action
+            android:id="@+id/action_menu_to_ajouter"
+            app:destination="@id/ajouterJoueurFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/jouerFragment"
+        android:name="com.example.duckpuck.JouerFragment" />
+
+    <fragment
+        android:id="@+id/statistiquesFragment"
+        android:name="com.example.duckpuck.StatsFragment" />
+
+    <fragment
+        android:id="@+id/historiqueFragment"
+        android:name="com.example.duckpuck.HistoriqueFragment" />
+
+    <fragment
+        android:id="@+id/parametresFragment"
+        android:name="com.example.duckpuck.ParametresFragment" />
+
+    <fragment
+        android:id="@+id/ajouterJoueurFragment"
+        android:name="com.example.duckpuck.AjouterJoueurFragment" />
+
+</navigation>

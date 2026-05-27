@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout paysage : 3 sections égales centrées avec marges -->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- ════════════════════════════════════════════════════════
+         IMAGE DE FOND — remplace @drawable/background par ton image
+         ════════════════════════════════════════════════════════ -->
+
+    <!-- Conteneur centré avec marges pour réduire la taille globale -->
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/chatgpt_image_18_mai_2026__15_13_41" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
+        android:paddingTop="40dp"
+        android:paddingBottom="40dp">
+
+        <!-- Conteneur des 3 colonnes égales -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <!-- ════════════════════════════════════════════════
+                 COLONNE 1 — MENU LATÉRAL
+                 ════════════════════════════════════════════════ -->
+            <LinearLayout
+                android:id="@+id/menuLateral"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_menu_border"
+                android:padding="8dp"
+                android:layout_marginEnd="10dp"
+                android:elevation="6dp">
+
+                <Button
+                    android:id="@+id/btnJouer"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="5dp"
+                    android:text="Jouer"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#2196F3" />
+
+                <Button
+                    android:id="@+id/btnAjouterJoueur"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="5dp"
+                    android:text="Ajouter un joueur"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#C8A84B" />
+
+                <Button
+                    android:id="@+id/btnHistorique"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="5dp"
+                    android:text="Historique des parties"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#C8A84B" />
+
+                <Button
+                    android:id="@+id/btnStatistiques"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="5dp"
+                    android:text="Statistiques"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#C8A84B" />
+
+                <Button
+                    android:id="@+id/btnParametres"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Paramètres"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#2196F3" />
+
+            </LinearLayout>
+
+            <!-- ════════════════════════════════════════════════
+                 COLONNE 2 — CARTE 1 VS 1 (dorée)
+                 ════════════════════════════════════════════════ -->
+
+            <!-- ════════════════════════════════════════════════
+                 COLONNE 3 — CARTE 2 VS 2 (bleue)
+                 ════════════════════════════════════════════════ -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="#009688"
+                android:padding="6dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

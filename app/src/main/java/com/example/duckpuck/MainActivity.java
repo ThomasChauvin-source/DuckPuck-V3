@@ -1,86 +1,75 @@
 package com.example.duckpuck;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.content.Intent;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnJouer, btnAjouterJoueur, btnHistorique, btnStatistiques, btnParametres;
-    private FrameLayout carte1v1, carte2v2;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Liaison des boutons du menu
-        btnJouer         = findViewById(R.id.btnJouer);
-        btnAjouterJoueur = findViewById(R.id.btnAjouterJoueur);
-        btnHistorique    = findViewById(R.id.btnHistorique);
-        btnStatistiques  = findViewById(R.id.btnStatistiques);
-        btnParametres    = findViewById(R.id.btnParametres);
+        // Démarrer la musique
+        mediaPlayer = MediaPlayer.create(this, R.raw.menu);
+        mediaPlayer.setLooping(true);  // boucle infinie
+        mediaPlayer.setVolume(0.5f, 0.5f);  // volume 50% gauche/droite
+        mediaPlayer.start();
 
-        // Liaison des cartes de mode de jeu
-        carte1v1 = findViewById(R.id.carte1v1);
-        carte2v2 = findViewById(R.id.carte2v2);
+        if (savedInstanceState == null) {
+            chargerFragment(new JouerFragment());
+        }
 
-        // Listeners
-        btnJouer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO : lancer la partie
-            }
-        });
+        Button btnJouer        = findViewById(R.id.btnJouer);
+        Button btnAjouter      = findViewById(R.id.btnAjouterJoueur);
+        Button btnHistorique   = findViewById(R.id.btnHistorique);
+        Button btnStatistiques = findViewById(R.id.btnStatistiques);
+        Button btnParametres   = findViewById(R.id.btnParametres);
 
-        btnAjouterJoueur.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, com.example.duckpuck.AjouterUnJoueur.class);
-                startActivity(intent);
-            }
-        });
+        btnJouer.setOnClickListener(v        -> chargerFragment(new JouerFragment()));
+        btnAjouter.setOnClickListener(v      -> chargerFragment(new AjouterJoueurFragment()));
+        btnHistorique.setOnClickListener(v   -> chargerFragment(new HistoriqueFragment()));
+        btnStatistiques.setOnClickListener(v -> chargerFragment(new StatsFragment()));
+        btnParametres.setOnClickListener(v   -> chargerFragment(new ParametresFragment()));
+    }
 
-        btnHistorique.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, com.example.duckpuck.HistoriqueDesParties.class);
-                startActivity(intent);
-            }
-        });
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();  // pause si l'app passe en arrière-plan
+        }
+    }
 
-        btnStatistiques.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, com.example.duckpuck.Statistiques.class);
-                startActivity(intent);
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();  // reprend quand on revient
+        }
+    }
 
-        btnParametres.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, com.example.duckpuck.Parametre.class);
-                startActivity(intent);
-            }
-        });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();  // libère la mémoire
+            mediaPlayer = null;
+        }
+    }
 
-        carte1v1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO : sélectionner le mode 1v1
-            }
-        });
-
-        carte2v2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO : sélectionner le mode 2v2
-            }
-        });
+    private void chargerFragment(Fragment fragment) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fragmentContainerView, fragment);
+        ft.commit();
     }
 }
