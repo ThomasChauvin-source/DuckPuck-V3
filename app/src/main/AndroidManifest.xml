@@ -12,6 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DuckPuck">
         <activity
+            android:name=".GameActivity" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
