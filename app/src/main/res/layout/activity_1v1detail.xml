@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/chatgpt_image_18_mai_2026__15_13_41" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
+        android:paddingTop="40dp"
+        android:paddingBottom="40dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:id="@+id/menuLateral"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_menu_border"
+                android:padding="8dp"
+                android:layout_marginEnd="10dp"
+                android:elevation="6dp">
+
+                <Button
+                    android:id="@+id/btnJouer"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="5dp"
+                    android:text="Jouer"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#2196F3" />
+
+                <Button
+                    android:id="@+id/btnAjouterJoueur"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="5dp"
+                    android:text="Ajouter un joueur"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#C8A84B" />
+
+                <Button
+                    android:id="@+id/btnHistorique"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="5dp"
+                    android:text="Historique des parties"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#C8A84B" />
+
+                <Button
+                    android:id="@+id/btnStatistiques"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="5dp"
+                    android:text="Statistiques"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#C8A84B" />
+
+                <Button
+                    android:id="@+id/btnParametres"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Paramètres"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="serif"
+                    android:backgroundTint="#2196F3" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="#009688"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Equipe Océan"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_marginBottom="5dp"
+                            android:text="Joueur 1" />
+
+                        <Spinner
+                            android:id="@+id/spinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#009688"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Equipe Sable"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_marginBottom="5dp"
+                            android:text="Joueur 1" />
+
+                        <Spinner
+                            android:id="@+id/spinner2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
