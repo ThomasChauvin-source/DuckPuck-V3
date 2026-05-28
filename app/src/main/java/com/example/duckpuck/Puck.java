@@ -8,6 +8,8 @@ public class Puck {
 
     private static final float FRICTION = 0.999f;
     private static final float MAX_SPEED = 40f;
+    private static final float SPEED_MULTIPLIER = 1.3f;
+
 
     public Puck(float x, float y, float radius) {
         this.x = x;
@@ -18,8 +20,8 @@ public class Puck {
     }
 
     public void update() {
-        x += vx;
-        y += vy;
+        x += vx * SPEED_MULTIPLIER;
+        y += vy * SPEED_MULTIPLIER;
 
         // Friction légère
         vx *= FRICTION;
