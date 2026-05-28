@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/chatgpt_image_18_mai_2026__15_13_41" />
+        android:src="@drawable/game_bg" />
 
     <!-- Layout principal : menu gauche + contenu droit -->
     <LinearLayout

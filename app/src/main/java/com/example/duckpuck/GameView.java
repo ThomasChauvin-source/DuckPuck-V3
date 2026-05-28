@@ -24,7 +24,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     // ── Paramètres de jeu ─────────────────────────────────────────────────
     private static final int   MAX_SCORE    = 7;
-    private static final long  FRAME_MS     = 16;   // ~60 FPS
+    private static final long  FRAME_MS     = 36;   // ~60 FPS
 
     // Ratios mesurés sur l'image 1642×958
     // Terrain jouable (intérieur des cordes)
