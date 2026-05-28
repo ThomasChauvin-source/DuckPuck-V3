@@ -78,7 +78,8 @@
                 android:fontFamily="serif"
                 android:text="Statistiques"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:background="@drawable/btn_type"/>
 
             <Button
                 android:id="@+id/btnParametres"
