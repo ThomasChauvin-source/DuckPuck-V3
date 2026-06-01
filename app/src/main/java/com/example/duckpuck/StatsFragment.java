@@ -1,5 +1,6 @@
 package com.example.duckpuck;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,53 +28,60 @@ public class StatsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Le layout doit contenir un LinearLayout avec id "listeStats"
         LinearLayout liste  = view.findViewById(R.id.listeStats);
         TextView     tvVide = view.findViewById(R.id.tvAucunJoueur);
 
+        Context appContext = requireContext().getApplicationContext();
+
         dbExecutor.execute(() -> {
-            AppDao dao = AppDatabase.getInstance(requireContext()).appDao();
+            AppDao dao = AppDatabase.getInstance(appContext).appDao();
             List<Joueur> joueurs = dao.getAllJoueurs();
 
-            requireActivity().runOnUiThread(() -> {
-                if (joueurs.isEmpty()) {
-                    if (tvVide != null) tvVide.setVisibility(View.VISIBLE);
-                    return;
-                }
-                if (tvVide != null) tvVide.setVisibility(View.GONE);
+            if (getActivity() != null) {
+                requireActivity().runOnUiThread(() -> {
+                    if (joueurs.isEmpty()) {
+                        if (tvVide != null) tvVide.setVisibility(View.VISIBLE);
+                        return;
+                    }
+                    if (tvVide != null) tvVide.setVisibility(View.GONE);
 
-                for (Joueur j : joueurs) {
-                    TextView tv = new TextView(requireContext());
-                    tv.setPadding(16, 24, 16, 24);
-                    tv.setTextSize(16f);
-                    tv.setTextColor(0xFFFFFFFF);
+                    // Nettoyer le conteneur avant d'ajouter pour éviter les doublons visuels
+                    liste.removeAllViews();
 
-                    int winRate = j.nbr_parties > 0
-                            ? Math.round(j.win * 100f / j.nbr_parties) : 0;
+                    for (Joueur j : joueurs) {
+                        TextView tv = new TextView(requireContext());
+                        tv.setPadding(16, 24, 16, 24);
+                        tv.setTextSize(16f);
+                        tv.setTextColor(0xFFFFFFFF);
 
-                    String texte = "👤 " + j.nom + "\n"
-                            + "  Parties  : " + j.nbr_parties + "\n"
-                            + "  Victoires: " + j.win
-                            + "  (" + winRate + " %)\n"
-                            + "  Buts     : " + j.buts;
+                        int winRate = j.nbr_parties > 0
+                                ? Math.round(j.win * 100f / j.nbr_parties) : 0;
 
-                    tv.setText(texte);
+                        String texte = "👤 " + j.nom + "\n"
+                                + "  Parties  : " + j.nbr_parties + "\n"
+                                + "  Victoires: " + j.win
+                                + "  (" + winRate + " %)\n"
+                                + "  Buts     : " + j.buts;
 
-                    View separator = new View(requireContext());
-                    separator.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, 1));
-                    separator.setBackgroundColor(0x44FFFFFF);
+                        tv.setText(texte);
 
-                    liste.addView(tv);
-                    liste.addView(separator);
-                }
-            });
+                        View separator = new View(requireContext());
+                        separator.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                        separator.setBackgroundColor(0x44FFFFFF);
+
+                        liste.addView(tv);
+                        liste.addView(separator);
+                    }
+                });
+            }
         });
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
+        // Corrigé : Libération propre de l'exécuteur ici
         dbExecutor.shutdown();
     }
 }

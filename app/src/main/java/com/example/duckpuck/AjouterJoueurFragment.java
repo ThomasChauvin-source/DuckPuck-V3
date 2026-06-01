@@ -1,5 +1,6 @@
 package com.example.duckpuck;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -39,44 +40,50 @@ public class AjouterJoueurFragment extends Fragment {
                 return;
             }
 
+            // Sécurité : On capture le contexte de l'application AVANT d'entrer dans le thread alternatif
+            Context appContext = requireContext().getApplicationContext();
+
             dbExecutor.execute(() -> {
-                AppDao dao = AppDatabase.getInstance(requireContext()).appDao();
+                AppDao dao = AppDatabase.getInstance(appContext).appDao();
 
                 // Vérifier si un joueur avec ce nom existe déjà
                 boolean doublon = dao.getAllJoueurs().stream()
                         .anyMatch(j -> j.nom.equalsIgnoreCase(nom));
 
-                requireActivity().runOnUiThread(() -> {
-                    if (doublon) {
-                        Toast.makeText(requireContext(),
-                                "Un joueur nommé \"" + nom + "\" existe déjà.",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        // Insérer en BDD sur le thread background
-                        dbExecutor.execute(() -> {
-                            Joueur joueur = new Joueur();
-                            joueur.nom        = nom;
-                            joueur.buts       = 0;
-                            joueur.win        = 0;
-                            joueur.nbr_parties = 0;
-                            dao.insertJoueur(joueur);
-
-                            requireActivity().runOnUiThread(() -> {
-                                Toast.makeText(requireContext(),
-                                        "Joueur \"" + nom + "\" ajouté !",
-                                        Toast.LENGTH_SHORT).show();
-                                editNom.setText("");
-                            });
+                if (doublon) {
+                    if (getActivity() != null) {
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(appContext,
+                                    "Un joueur nommé \"" + nom + "\" existe déjà.",
+                                    Toast.LENGTH_SHORT).show();
                         });
                     }
-                });
+                } else {
+                    // On est déjà sur le thread background, on insère directement !
+                    Joueur joueur = new Joueur();
+                    joueur.nom        = nom;
+                    joueur.buts       = 0;
+                    joueur.win        = 0;
+                    joueur.nbr_parties = 0;
+                    dao.insertJoueur(joueur);
+
+                    if (getActivity() != null) {
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(appContext,
+                                    "Joueur \"" + nom + "\" ajouté !",
+                                    Toast.LENGTH_SHORT).show();
+                            editNom.setText("");
+                        });
+                    }
+                }
             });
         });
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
+        // Corrigé : On détruit l'exécuteur dans onDestroy pour éviter les RejectedExecutionException
         dbExecutor.shutdown();
     }
 }

@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Layout paysage : 3 sections égales centrées avec marges -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#1A009688"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Classement des Joueurs"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
 
     <TextView
         android:id="@+id/tvAucunJoueur"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="Aucun joueur enregistré"
+        android:textColor="#CCCCCC"
+        android:gravity="center"
+        android:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/listeStats"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"></LinearLayout>
+        android:fadeScrollbars="false">
 
-</FrameLayout>
+        <LinearLayout
+            android:id="@+id/listeStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:divider="?android:attr/dividerVertical"
+            android:showDividers="middle">
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
