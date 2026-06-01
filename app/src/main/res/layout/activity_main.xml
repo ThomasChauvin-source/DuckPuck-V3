@@ -3,23 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Arrière-plan image -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/game_bg" />
 
-    <!-- Layout principal : menu gauche + contenu droit -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:padding="40dp">
 
-        <!-- ══════════════════════════════
-             COLONNE GAUCHE — MENU FIXE
-             ══════════════════════════════ -->
         <LinearLayout
             android:id="@+id/menuLateral"
             android:layout_width="0dp"
@@ -32,71 +27,67 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnJouer"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_marginBottom="5dp"
-                android:backgroundTint="#2196F3"
                 android:fontFamily="serif"
                 android:text="Jouer"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:background="@drawable/bg_btn_selector" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnAjouterJoueur"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_marginBottom="5dp"
-                android:backgroundTint="#C8A84B"
                 android:fontFamily="serif"
                 android:text="Ajouter un joueur"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:background="@drawable/bg_btn_selector" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnHistorique"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_marginBottom="5dp"
-                android:backgroundTint="#C8A84B"
                 android:fontFamily="serif"
                 android:text="Historique des parties"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:background="@drawable/bg_btn_selector" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnStatistiques"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_marginBottom="5dp"
-                android:backgroundTint="#C8A84B"
                 android:fontFamily="serif"
                 android:text="Statistiques"
                 android:textColor="#FFFFFF"
                 android:textSize="13sp"
-                android:background="@drawable/btn_type"/>
+                android:background="@drawable/bg_btn_selector" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnParametres"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:backgroundTint="#2196F3"
                 android:fontFamily="serif"
                 android:text="Paramètres"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:background="@drawable/bg_btn_selector" />
 
         </LinearLayout>
 
-        <!-- ══════════════════════════════
-             COLONNE DROITE — CONTENU
-             ══════════════════════════════ -->
         <FrameLayout
             android:id="@+id/fragmentContainerView"
             android:layout_width="0dp"
