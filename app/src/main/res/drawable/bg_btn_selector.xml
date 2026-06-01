@@ -5,6 +5,6 @@
 
     <item android:state_pressed="true" android:drawable="@drawable/assetboisbtn2" />
 
-    <item android:drawable="@drawable/bg_btn_custom" />
+    <item android:drawable="@drawable/assetboisbtn" />
 
 </selector>
