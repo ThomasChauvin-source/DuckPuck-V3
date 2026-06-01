@@ -12,14 +12,10 @@
         android:layout_height="wrap_content"
         android:text="TextView" />
 
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/listeStats"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#009688">
+        android:orientation="vertical"></LinearLayout>
 
-        <ListView
-            android:id="@+id/listeStats"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
 </FrameLayout>
