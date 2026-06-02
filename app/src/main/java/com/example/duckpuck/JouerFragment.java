@@ -6,12 +6,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 public class JouerFragment extends Fragment {
 
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_jouer, container, false);
     }
 
@@ -19,26 +24,22 @@ public class JouerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Récupération de tes composants d'origine
-        View carte1v1 = view.findViewById(R.id.carte1v1);
-        View carte2v2 = view.findViewById(R.id.carte2v2);
+        CardView carte1v1 = view.findViewById(R.id.carte1v1);
+        CardView carte2v2 = view.findViewById(R.id.carte2v2);
 
-        // Petite modification : on ouvre l'écran de sélection de joueurs dédié
-        carte1v1.setOnClickListener(v -> naviguerVersChoixJoueurs(GameView.MODE_2P));
-        carte2v2.setOnClickListener(v -> naviguerVersChoixJoueurs(GameView.MODE_4P));
-    }
+        // Récupération sécurisée du NavController propre à ce fragment
+        NavController navController = NavHostFragment.findNavController(this);
 
-    private void naviguerVersChoixJoueurs(int mode) {
-        ChoixJoueursFragment prochainFragment = new ChoixJoueursFragment();
+        carte1v1.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putBoolean("is2v2", false);
+            navController.navigate(R.id.choixJoueursFragment, args);
+        });
 
-        Bundle arguments = new Bundle();
-        arguments.putInt("game_mode", mode);
-        prochainFragment.setArguments(arguments);
-
-        // ATTENTION : Remplace R.id.fragment_container par l'ID de ton conteneur de fragments réel dans activity_main.xml
-        getParentFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainerView, prochainFragment)
-                .addToBackStack(null) // Permet au bouton "Retour" du téléphone de revenir au choix 1v1/2v2
-                .commit();
+        carte2v2.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putBoolean("is2v2", true);
+            navController.navigate(R.id.choixJoueursFragment, args);
+        });
     }
 }

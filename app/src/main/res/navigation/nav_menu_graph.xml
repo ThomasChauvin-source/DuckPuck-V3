@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/menuFragment">
 
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.example.duckpuck.MenuFragment">
-
-        <action
-            android:id="@+id/action_menu_to_jouer"
-            app:destination="@id/jouerFragment" />
-
-        <action
-            android:id="@+id/action_menu_to_stats"
-            app:destination="@id/statistiquesFragment" />
-
-        <action
-            android:id="@+id/action_menu_to_historique"
-            app:destination="@id/historiqueFragment" />
-
-        <action
-            android:id="@+id/action_menu_to_parametres"
-            app:destination="@id/parametresFragment" />
-
-        <action
-            android:id="@+id/action_menu_to_ajouter"
-            app:destination="@id/ajouterJoueurFragment" />
-
-    </fragment>
+        android:name="com.example.duckpuck.MenuFragment" />
 
     <fragment
         android:id="@+id/jouerFragment"
@@ -48,5 +27,9 @@
     <fragment
         android:id="@+id/ajouterJoueurFragment"
         android:name="com.example.duckpuck.AjouterJoueurFragment" />
+
+    <fragment
+        android:id="@+id/choixJoueursFragment"
+        android:name="com.example.duckpuck.ChoixJoueursFragment" />
 
 </navigation>

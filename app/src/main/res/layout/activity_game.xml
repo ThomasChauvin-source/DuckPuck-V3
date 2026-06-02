@@ -1,20 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Ce layout est volontairement minimal : GameView occupe tout l'écran.
-    Le SurfaceView gère lui-même le rendu du jeu.
--->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/game_container"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#000000">
+    android:layout_height="match_parent">
 
-    <!--
-        GameView est ajouté programmatiquement dans GameActivity.onCreate()
-        via setContentView(gameView).
-        Ce fichier XML est fourni à titre indicatif si vous préférez
-        l'inflater manuellement et y insérer la vue.
-    -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/imagbackflou" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="24dp">
+
+        <LinearLayout
+            android:id="@+id/menuLateral"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_menu_border"
+            android:elevation="6dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnJouer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:padding="14dp"
+                android:fontFamily="serif"
+                android:text="Jouer"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:background="@drawable/bg_btn_selector" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnAjouterJoueur"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:padding="14dp"
+                android:fontFamily="serif"
+                android:text="Ajouter Joueur"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:background="@drawable/bg_btn_selector" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnHistorique"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:padding="14dp"
+                android:fontFamily="serif"
+                android:text="Historique"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:background="@drawable/bg_btn_selector" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnStatistiques"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:padding="14dp"
+                android:fontFamily="serif"
+                android:text="Statistiques"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:background="@drawable/bg_btn_selector" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnParametres"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="14dp"
+                android:fontFamily="serif"
+                android:text="Paramètres"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:background="@drawable/bg_btn_selector" />
+
+        </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.2"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_menu_graph" />
+
+    </LinearLayout>
 </FrameLayout>

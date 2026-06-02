@@ -1,14 +1,15 @@
 package com.example.duckpuck;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,82 +18,79 @@ public class HistoriqueFragment extends Fragment {
 
     private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_historique, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Le layout doit contenir un LinearLayout avec id "listeParties"
-        LinearLayout liste = view.findViewById(R.id.listeParties);
-        TextView     tvVide = view.findViewById(R.id.tvAucunePartie);
+        LinearLayout listeParties = view.findViewById(R.id.listeParties);
+        TextView tvAucune = view.findViewById(R.id.tvAucunePartie);
+
+        Context appContext = requireContext().getApplicationContext();
 
         dbExecutor.execute(() -> {
-            AppDao dao = AppDatabase.getInstance(requireContext()).appDao();
+            // Appel à votre base de données
+            AppDao dao = AppDatabase.getInstance(appContext).appDao();
+
+            // ATTENTION : Si le nom de votre méthode dans AppDao est différent (ex: getAllParties),
+            // remplacez simplement le nom de la méthode ci-dessous.
             List<PartieAvecJoueurs> historique = dao.getHistoriqueParties();
 
-            requireActivity().runOnUiThread(() -> {
-                if (historique.isEmpty()) {
-                    if (tvVide != null) tvVide.setVisibility(View.VISIBLE);
-                    return;
-                }
-                if (tvVide != null) tvVide.setVisibility(View.GONE);
+            if (isAdded() && getActivity() != null) {
+                requireActivity().runOnUiThread(() -> {
+                    if (!isAdded()) return;
 
-                for (PartieAvecJoueurs paj : historique) {
-                    Partie p = paj.partie;
-
-                    // Construire dynamiquement une ligne par partie
-                    TextView tv = new TextView(requireContext());
-                    tv.setPadding(16, 24, 16, 24);
-                    tv.setTextSize(16f);
-                    tv.setTextColor(0xFFFFFFFF);
-
-                    String equipeGagnante = p.score_equipe1 > p.score_equipe2
-                            ? "🔴 Rouge" : "🔵 Bleu";
-
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Partie #").append(p.id_partie).append("\n");
-                    sb.append("Rouge ").append(p.score_equipe1)
-                            .append("  —  ").append(p.score_equipe2).append(" Bleu\n");
-                    sb.append("Vainqueur : ").append(equipeGagnante);
-
-                    // Ajouter les noms des joueurs si disponibles
-                    if (paj.participations != null && !paj.participations.isEmpty()) {
-                        sb.append("\n");
-                        for (Participer part : paj.participations) {
-                            String nom = dao.getNomJoueur(part.id_joueur);
-                            if (nom != null) {
-                                String equipe = part.equipe == 1 ? "Rouge" : "Bleu";
-                                sb.append("  • ").append(nom)
-                                        .append(" (").append(equipe).append(")");
-                                if (part.a_gagne) sb.append(" ✓");
-                                sb.append("\n");
-                            }
-                        }
+                    if (historique == null || historique.isEmpty()) {
+                        if (tvAucune != null) tvAucune.setVisibility(View.VISIBLE);
+                        return;
                     }
+                    if (tvAucune != null) tvAucune.setVisibility(View.GONE);
 
-                    tv.setText(sb.toString());
+                    listeParties.removeAllViews();
 
-                    // Séparateur visuel
-                    View separator = new View(requireContext());
-                    separator.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, 1));
-                    separator.setBackgroundColor(0x44FFFFFF);
+                    // On parcourt votre liste de PartieAvecJoueurs
+                    for (PartieAvecJoueurs item : historique) {
+                        // On extrait l'objet Partie présent à l'intérieur (votre classe Partie.java)
+                        Partie p = item.partie;
 
-                    liste.addView(tv);
-                    liste.addView(separator);
-                }
-            });
+                        TextView tv = new TextView(requireContext());
+                        tv.setPadding(16, 20, 16, 20);
+                        tv.setTextSize(16f);
+                        tv.setTextColor(0xFFFFFFFF);
+
+                        // Utilisation de vos vraies variables : id_partie, score_equipe1, score_equipe2, temps
+                        String texte = "🎮 Match N° " + p.id_partie + "\n"
+                                + "  Score : " + p.score_equipe1 + " - " + p.score_equipe2 + "\n"
+                                + "  Durée : " + p.temps + " secondes";
+
+                        // Optionnel : Si vous voulez afficher le nombre de joueurs ayant participé à cette partie
+                        if (item.participations != null) {
+                            texte += "\n  Nombre de joueurs : " + item.participations.size();
+                        }
+
+                        tv.setText(texte);
+
+                        View separator = new View(requireContext());
+                        separator.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                        separator.setBackgroundColor(0x33FFFFFF);
+
+                        listeParties.addView(tv);
+                        listeParties.addView(separator);
+                    }
+                });
+            }
         });
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
         dbExecutor.shutdown();
     }
 }
