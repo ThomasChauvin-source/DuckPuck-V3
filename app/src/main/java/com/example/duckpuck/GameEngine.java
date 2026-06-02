@@ -5,7 +5,7 @@ import android.graphics.RectF;
 public class GameEngine {
 
     public interface OnCollisionListener {
-        void onMalletHit();
+        void onMalletHit(int malletIndex);
     }
     private OnCollisionListener collisionListener;
 
@@ -70,8 +70,8 @@ public class GameEngine {
             resolveRectCollision(puck, wall);
         }
 
-        for (Mallet mallet : mallets) {
-            resolveMalletCollision(puck, mallet);
+        for (int i = 0; i < mallets.length; i++) {
+            resolveMalletCollision(puck, mallets[i], i);
         }
 
         return 0;
@@ -107,7 +107,7 @@ public class GameEngine {
         }
     }
 
-    private void resolveMalletCollision(Puck puck, Mallet mallet) {
+    private void resolveMalletCollision(Puck puck, Mallet mallet, int malletIndex) {
         float dx   = puck.x - mallet.x;
         float dy   = puck.y - mallet.y;
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
@@ -132,7 +132,7 @@ public class GameEngine {
             puck.vy += impulse * ny + mvy * IMPULSE_FACTOR;
 
             if (collisionListener != null) {
-                collisionListener.onMalletHit();
+                collisionListener.onMalletHit(malletIndex);
             }
         }
     }

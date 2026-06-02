@@ -48,6 +48,16 @@
                 android:background="#33FFFFFF"
                 android:layout_marginBottom="12dp" />
 
+            <TextView
+                android:id="@+id/labelEq1Joueur2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:text="Joueur 2"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
             <Spinner
                 android:id="@+id/spinnerEq1Joueur2"
                 android:layout_width="match_parent"
@@ -80,6 +90,16 @@
                 android:layout_height="50dp"
                 android:background="#33FFFFFF"
                 android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/labelEq2Joueur2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:text="Joueur 2"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <Spinner
                 android:id="@+id/spinnerEq2Joueur2"

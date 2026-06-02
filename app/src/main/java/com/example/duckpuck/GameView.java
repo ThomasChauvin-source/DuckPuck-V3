@@ -85,13 +85,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private RectF   screenRect;
 
     private RectF hudBox1, hudBox2, hudBox3, hudBox4;
+    private RectF btnResume, btnSettings, btnQuit;
     private float hudCY;
 
     private GameThread gameThread;
     private int[] malletPointerIds;
+    private int[] playerGoals;
+    private int lastHitMalletIndex = -1;
 
     public interface GameListener {
         void onGameOver(int winnerTeam, int[] scores);
+        void onSettingsRequested();
+        void onQuitRequested();
     }
     private GameListener listener;
     private final android.os.Handler mainHandler = new android.os.Handler(android.os.Looper.getMainLooper());
@@ -203,12 +208,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         if (mode == MODE_2P) {
             mallets = new Mallet[2];
+            playerGoals = new int[2];
             mallets[0] = new Mallet(fLeft + fW * 0.18f, cy, malletRadius, COLOR_P1);
             mallets[0].setZone(fLeft, cx, fTop, fBottom);
             mallets[1] = new Mallet(fLeft + fW * 0.82f, cy, malletRadius, COLOR_P2);
             mallets[1].setZone(cx, fRight, fTop, fBottom);
         } else {
             mallets = new Mallet[4];
+            playerGoals = new int[4];
             mallets[0] = new Mallet(fLeft + fW * 0.25f, fTop + fH * 0.35f, malletRadius, COLOR_P1);
             mallets[0].setZone(fLeft, cx, fTop, fBottom);
             mallets[2] = new Mallet(fLeft + fW * 0.10f, fTop + fH * 0.65f, malletRadius, COLOR_P3);
@@ -228,10 +235,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         // ── CONNEXION DE L'ÉCOUTEUR AUDIO ENTRE L'ENGINE ET LA VUE ──
         engine.setOnCollisionListener(new GameEngine.OnCollisionListener() {
             @Override
-            public void onMalletHit() {
+            public void onMalletHit(int malletIndex) {
+                lastHitMalletIndex = malletIndex;
                 if (soundPool != null && soundHitId != 0) {
                     // Lecture instantanée du bruitage sans latence
-                    soundPool.play(soundHitId, 1.0f, 1.0f, 1, 0, 1.0f);
+                    float volume = AudioSettings.getSfxVolume(getContext());
+                    soundPool.play(soundHitId, volume, volume, 1, 0, 1.0f);
                 }
             }
         });
@@ -283,8 +292,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             case PLAYING:
                 int result = engine.update(puck, mallets);
                 updatePuckGradient();
-                if (result == 1) { scores[0]++; lastScorer = 1; onGoal(); }
-                else if (result == 2) { scores[1]++; lastScorer = 2; onGoal(); }
+                if (result == 1) { scores[0]++; lastScorer = 1; creditGoal(result); onGoal(); }
+                else if (result == 2) { scores[1]++; lastScorer = 2; creditGoal(result); onGoal(); }
                 break;
 
             case GOAL:
@@ -308,6 +317,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private void onGoal() {
         state = GameState.GOAL;
         goalDisplayTime = System.currentTimeMillis();
+    }
+
+    private void creditGoal(int scoringTeam) {
+        if (lastHitMalletIndex < 0 || playerGoals == null || lastHitMalletIndex >= playerGoals.length) {
+            return;
+        }
+
+        boolean redMallet = lastHitMalletIndex == 0 || (mode == MODE_4P && lastHitMalletIndex == 2);
+        boolean blueMallet = lastHitMalletIndex == 1 || (mode == MODE_4P && lastHitMalletIndex == 3);
+
+        if ((scoringTeam == 1 && redMallet) || (scoringTeam == 2 && blueMallet)) {
+            playerGoals[lastHitMalletIndex]++;
+        }
+        lastHitMalletIndex = -1;
     }
 
     private void resetPositions() {
@@ -467,9 +490,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 canvas.drawRect(screenRect, paintOverlay);
                 paintHudText.setTextSize(fH * 0.14f);
                 paintHudText.setColor(Color.WHITE);
-                canvas.drawText("PAUSE", fLeft + fW / 2f, fTop + fH * 0.48f, paintHudText);
-                paintHudText.setTextSize(fH * 0.07f);
-                paintHudText.setColor(0xFFAAAAAA);
+                canvas.drawText("PAUSE", fLeft + fW / 2f, fTop + fH * 0.32f, paintHudText);
+                drawPauseMenuButtons(canvas);
+                paintHudText.setTextSize(1f);
+                paintHudText.setColor(0x00000000);
                 canvas.drawText("Appuie sur ⏸ pour reprendre", fLeft + fW / 2f, fTop + fH * 0.60f, paintHudText);
                 break;
             }
@@ -497,6 +521,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
             if (hudBox4 != null && hudBox4.contains(tx, ty)) {
                 togglePause();
+                return true;
+            }
+            if (state == GameState.PAUSED) {
+                handlePauseButtonTouch(tx, ty);
                 return true;
             }
         }
@@ -541,6 +569,48 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             stateBeforePause = state;
             state = GameState.PAUSED;
         }
+    }
+
+    private void handlePauseButtonTouch(float x, float y) {
+        if (btnResume != null && btnResume.contains(x, y)) {
+            togglePause();
+        } else if (btnSettings != null && btnSettings.contains(x, y)) {
+            if (listener != null) {
+                mainHandler.post(() -> listener.onSettingsRequested());
+            }
+        } else if (btnQuit != null && btnQuit.contains(x, y)) {
+            if (listener != null) {
+                mainHandler.post(() -> listener.onQuitRequested());
+            }
+        }
+    }
+
+    private void drawPauseMenuButtons(Canvas canvas) {
+        float buttonW = fW * 0.44f;
+        float buttonH = fH * 0.10f;
+        float left = fLeft + (fW - buttonW) / 2f;
+        float top = fTop + fH * 0.42f;
+        float gap = buttonH * 0.24f;
+
+        btnResume = new RectF(left, top, left + buttonW, top + buttonH);
+        btnSettings = new RectF(left, top + buttonH + gap, left + buttonW, top + buttonH * 2f + gap);
+        btnQuit = new RectF(left, top + (buttonH + gap) * 2f, left + buttonW, top + buttonH * 3f + gap * 2f);
+
+        drawMenuButton(canvas, btnResume, "REPRENDRE", 0xFF2E7D32);
+        drawMenuButton(canvas, btnSettings, "PARAMETRES", 0xFF1565C0);
+        drawMenuButton(canvas, btnQuit, "QUITTER", 0xFFC62828);
+    }
+
+    private void drawMenuButton(Canvas canvas, RectF rect, String label, int color) {
+        Paint bg = new Paint(Paint.ANTI_ALIAS_FLAG);
+        bg.setColor(color);
+        canvas.drawRoundRect(rect, 10f, 10f, bg);
+
+        paintHudText.setTextSize(rect.height() * 0.42f);
+        paintHudText.setColor(Color.WHITE);
+        Paint.FontMetrics metrics = paintHudText.getFontMetrics();
+        float textY = rect.centerY() - (metrics.ascent + metrics.descent) / 2f;
+        canvas.drawText(label, rect.centerX(), textY, paintHudText);
     }
 
     private void assignPointerToMallet(int pointerId, float x, float y) {
@@ -606,5 +676,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             gameThread = new GameThread();
             gameThread.start();
         }
+    }
+
+    public int[] getCurrentScores() {
+        return scores != null ? scores.clone() : new int[]{0, 0};
+    }
+
+    public int[] getPlayerGoals() {
+        return playerGoals != null ? playerGoals.clone() : new int[0];
     }
 }

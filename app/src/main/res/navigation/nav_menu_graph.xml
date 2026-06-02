@@ -6,30 +6,73 @@
 
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.example.duckpuck.MenuFragment" />
+        android:name="com.example.duckpuck.MenuFragment" >
+        <action
+            android:id="@+id/action_menuFragment_to_historiqueFragment"
+            app:destination="@id/historiqueFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_parametresFragment"
+            app:destination="@id/parametresFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_ajouterJoueurFragment"
+            app:destination="@id/ajouterJoueurFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_statistiquesFragment"
+            app:destination="@id/statistiquesFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_jouerFragment"
+            app:destination="@id/jouerFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/jouerFragment"
-        android:name="com.example.duckpuck.JouerFragment" />
+        android:name="com.example.duckpuck.JouerFragment" >
+        <action
+            android:id="@+id/action_jouerFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+        <action
+            android:id="@+id/action_jouerFragment_to_choixJoueursFragment"
+            app:destination="@id/choixJoueursFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/statistiquesFragment"
-        android:name="com.example.duckpuck.StatsFragment" />
+        android:name="com.example.duckpuck.StatsFragment" >
+        <action
+            android:id="@+id/action_statistiquesFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/historiqueFragment"
-        android:name="com.example.duckpuck.HistoriqueFragment" />
+        android:name="com.example.duckpuck.HistoriqueFragment" >
+        <action
+            android:id="@+id/action_historiqueFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/parametresFragment"
-        android:name="com.example.duckpuck.ParametresFragment" />
+        android:name="com.example.duckpuck.ParametresFragment" >
+        <action
+            android:id="@+id/action_parametresFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/ajouterJoueurFragment"
-        android:name="com.example.duckpuck.AjouterJoueurFragment" />
+        android:name="com.example.duckpuck.AjouterJoueurFragment" >
+        <action
+            android:id="@+id/action_ajouterJoueurFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/choixJoueursFragment"
-        android:name="com.example.duckpuck.ChoixJoueursFragment" />
+        android:name="com.example.duckpuck.ChoixJoueursFragment" >
+        <action
+            android:id="@+id/action_choixJoueursFragment_to_jouerFragment"
+            app:destination="@id/jouerFragment" />
+    </fragment>
 
 </navigation>

@@ -33,6 +33,12 @@ public interface AppDao {
     @Query("SELECT * FROM Joueur ORDER BY nom ASC")
     List<Joueur> getAllJoueurs();
 
+    @Query("SELECT * FROM Joueur ORDER BY buts DESC, nom ASC LIMIT 10")
+    List<Joueur> getTopButeurs();
+
+    @Query("SELECT * FROM Joueur ORDER BY nbr_parties DESC, nom ASC LIMIT 10")
+    List<Joueur> getTopParties();
+
     // ── Un joueur par son id ──────────────────────────────────────────────
     @Query("SELECT * FROM Joueur WHERE id_joueur = :id")
     Joueur getJoueurById(int id);

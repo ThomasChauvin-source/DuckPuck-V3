@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer = MediaPlayer.create(this, R.raw.menu);
         if (mediaPlayer != null) {
             mediaPlayer.setLooping(true);
-            mediaPlayer.setVolume(0.5f, 0.5f);
+            applyMusicVolume();
             mediaPlayer.start();
         }
 
@@ -60,9 +60,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        applyMusicVolume();
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
             mediaPlayer.start();
         }
+    }
+
+    public void applyMusicVolume() {
+        if (mediaPlayer == null) return;
+        float volume = AudioSettings.getMusicVolume(this);
+        mediaPlayer.setVolume(volume, volume);
     }
 
     @Override
