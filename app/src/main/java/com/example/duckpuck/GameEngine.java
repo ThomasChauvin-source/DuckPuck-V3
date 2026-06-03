@@ -6,6 +6,7 @@ public class GameEngine {
 
     public interface OnCollisionListener {
         void onMalletHit(int malletIndex);
+        void onWallHit();
     }
     private OnCollisionListener collisionListener;
 
@@ -43,11 +44,13 @@ public class GameEngine {
             puck.y  = fTop + puck.radius;
             puck.vy = Math.abs(puck.vy) * WALL_RESTITUTION;
             puck.vx *= WALL_TANGENT_DAMPING;
+            notifyWallHit();
         }
         if (puck.y + puck.radius > fBottom) {
             puck.y  = fBottom - puck.radius;
             puck.vy = -Math.abs(puck.vy) * WALL_RESTITUTION;
             puck.vx *= WALL_TANGENT_DAMPING;
+            notifyWallHit();
         }
 
         float fH      = fBottom - fTop;
@@ -61,6 +64,7 @@ public class GameEngine {
                 puck.x  = fLeft + puck.radius;
                 puck.vx = Math.abs(puck.vx) * WALL_RESTITUTION;
                 puck.vy *= WALL_TANGENT_DAMPING;
+                notifyWallHit();
             }
         }
 
@@ -71,6 +75,7 @@ public class GameEngine {
                 puck.x  = fRight - puck.radius;
                 puck.vx = -Math.abs(puck.vx) * WALL_RESTITUTION;
                 puck.vy *= WALL_TANGENT_DAMPING;
+                notifyWallHit();
             }
         }
         puck.clampSpeed();
@@ -118,6 +123,7 @@ public class GameEngine {
             puck.vy = Math.abs(puck.vy) * WALL_RESTITUTION;
             puck.vx *= WALL_TANGENT_DAMPING;
         }
+        notifyWallHit();
         puck.clampSpeed();
     }
 
@@ -171,5 +177,11 @@ public class GameEngine {
 
     private float clamp(float value, float min, float max) {
         return Math.max(min, Math.min(max, value));
+    }
+
+    private void notifyWallHit() {
+        if (collisionListener != null) {
+            collisionListener.onWallHit();
+        }
     }
 }

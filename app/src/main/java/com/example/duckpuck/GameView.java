@@ -60,6 +60,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     // ── GESTION AUDIO (SoundPool) ─────────────────────────────────────────
     private SoundPool soundPool;
     private int soundHitId = 0;
+    private int soundWallId = 0;
+    private long lastWallSoundTime = 0;
+    private static final long WALL_SOUND_COOLDOWN_MS = 120;
 
     // ── État du jeu ───────────────────────────────────────────────────────
     private enum GameState { COUNTDOWN, PLAYING, REPLAY, GOAL, PAUSED, GAME_OVER }
@@ -139,8 +142,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 .setAudioAttributes(audioAttributes)
                 .build();
 
-        // Chargement de ton fichier se trouvant dans res/raw/splash_striker.mp3
-        soundHitId = soundPool.load(context, R.raw.splash_striker, 1);
+        // Son joue quand un striker touche le palet.
+        soundHitId = soundPool.load(context, R.raw.coinsond, 1);
+        soundWallId = soundPool.load(context, R.raw.boing, 1);
     }
 
     private void loadBackground() {
@@ -295,6 +299,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     // Lecture instantanée du bruitage sans latence
                     float volume = AudioSettings.getSfxVolume(getContext());
                     soundPool.play(soundHitId, volume, volume, 1, 0, 1.0f);
+                }
+            }
+
+            @Override
+            public void onWallHit() {
+                long now = System.currentTimeMillis();
+                if (now - lastWallSoundTime < WALL_SOUND_COOLDOWN_MS) return;
+                lastWallSoundTime = now;
+
+                if (soundPool != null && soundWallId != 0) {
+                    float volume = AudioSettings.getSfxVolume(getContext());
+                    soundPool.play(soundWallId, volume, volume, 1, 0, 1.0f);
                 }
             }
         });
