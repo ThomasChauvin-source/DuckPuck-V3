@@ -591,50 +591,78 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         float boxH   = hudBox1.height();
         float hudCYr = hudCY;
 
-        float scoreSize = boxH * 0.62f;
-        float labelSize = boxH * 0.22f;
-        paintHudText.setTextSize(scoreSize);
-        paintHudSub.setTextSize(labelSize);
-
-        float cx1 = hudBox1.centerX();
-        paintHudSub.setColor(COLOR_P1);
-        canvas.drawText("ROUGE", cx1, hudCYr - boxH * 0.08f, paintHudSub);
-        paintHudText.setColor(Color.WHITE);
-        canvas.drawText(String.valueOf(scores[0]), cx1, hudCYr + boxH * 0.28f, paintHudText);
-
-        float cx2 = hudBox2.centerX();
-        int totalGoals   = getTotalGoals();
-        int paletsLeft   = Math.max(0, TOTAL_PUCKS - totalGoals);
-        paintHudText.setTextSize(scoreSize * 0.75f);
-        paintHudSub.setColor(0xFFFFD700);
-        canvas.drawText("PALETS", cx2, hudCYr - boxH * 0.08f, paintHudSub);
-        paintHudText.setColor(0xFFFFD700);
-        canvas.drawText(String.valueOf(paletsLeft), cx2, hudCYr + boxH * 0.28f, paintHudText);
-        paintHudText.setTextSize(scoreSize);
-
-        float cx3 = hudBox3.centerX();
-        paintHudSub.setColor(COLOR_P2);
-        canvas.drawText("BLEU", cx3, hudCYr - boxH * 0.08f, paintHudSub);
-        paintHudText.setColor(Color.WHITE);
-        canvas.drawText(String.valueOf(scores[1]), cx3, hudCYr + boxH * 0.28f, paintHudText);
+        drawScorePanel(canvas, hudBox1, "ROUGE", scores[0], COLOR_P1, boxH, hudCYr);
+        int paletsLeft = Math.max(0, TOTAL_PUCKS - getTotalGoals());
+        drawCenterPanel(canvas, hudBox2, paletsLeft, boxH, hudCYr);
+        drawScorePanel(canvas, hudBox3, "BLEU", scores[1], COLOR_P2, boxH, hudCYr);
 
         drawPauseButton(canvas, hudBox4, hudCYr, boxH);
     }
 
+    private void drawScorePanel(Canvas canvas, RectF box, String label, int score, int color, float boxH, float cy) {
+        RectF panel = insetRect(box, boxH * 0.08f);
+        drawHudPanel(canvas, panel);
+
+        paintHudAccent.setColor(color);
+        float dotRadius = boxH * 0.12f;
+        canvas.drawCircle(panel.left + dotRadius * 1.7f, panel.centerY(), dotRadius, paintHudAccent);
+
+        paintHudSub.setTextSize(boxH * 0.20f);
+        paintHudSub.setColor(color);
+        canvas.drawText(label, panel.centerX(), cy - boxH * 0.13f, paintHudSub);
+
+        paintHudText.setTextSize(boxH * 0.54f);
+        paintHudText.setColor(Color.WHITE);
+        canvas.drawText(String.valueOf(score), panel.centerX(), cy + boxH * 0.28f, paintHudText);
+    }
+
+    private void drawCenterPanel(Canvas canvas, RectF box, int paletsLeft, float boxH, float cy) {
+        RectF panel = insetRect(box, boxH * 0.08f);
+        drawHudPanel(canvas, panel);
+
+        paintHudSub.setTextSize(boxH * 0.18f);
+        paintHudSub.setColor(0xFFD6A94A);
+        canvas.drawText("PALETS", panel.centerX(), cy - boxH * 0.13f, paintHudSub);
+
+        paintHudText.setTextSize(boxH * 0.46f);
+        paintHudText.setColor(0xFFFFE08A);
+        canvas.drawText(paletsLeft + "/" + TOTAL_PUCKS, panel.centerX(), cy + boxH * 0.25f, paintHudText);
+    }
+
+    private void drawHudPanel(Canvas canvas, RectF rect) {
+        paintHudPanel.setStyle(Paint.Style.FILL);
+        canvas.drawRoundRect(rect, 12f, 12f, paintHudPanel);
+        paintHudBorder.setStrokeWidth(Math.max(2f, rect.height() * 0.035f));
+        paintHudBorder.setColor(0xFFD6A94A);
+        canvas.drawRoundRect(rect, 12f, 12f, paintHudBorder);
+    }
+
+    private RectF insetRect(RectF rect, float inset) {
+        return new RectF(rect.left + inset, rect.top + inset, rect.right - inset, rect.bottom - inset);
+    }
+
     private void drawPauseButton(Canvas canvas, RectF box, float cy, float boxH) {
         float cx = box.centerX();
-        Paint bg = new Paint(Paint.ANTI_ALIAS_FLAG);
-        bg.setColor(0x55000000);
         float pad = boxH * 0.12f;
-        canvas.drawRoundRect(box.left + pad, box.top + pad, box.right - pad, box.bottom - pad, 8f, 8f, bg);
+        RectF panel = new RectF(box.left + pad, box.top + pad, box.right - pad, box.bottom - pad);
+        drawHudPanel(canvas, panel);
 
         if (state == GameState.PAUSED) {
             paintHudText.setTextSize(boxH * 0.55f);
             paintHudText.setColor(0xFF00FF88);
+            paintHudText.setTextSize(boxH * 0.46f);
+            canvas.drawText(">", cx, cy + boxH * 0.18f, paintHudText);
+            paintHudText.setTextSize(1f);
+            paintHudText.setColor(0x00000000);
             canvas.drawText("▶", cx, cy + boxH * 0.22f, paintHudText);
         } else {
             paintHudText.setTextSize(boxH * 0.55f);
             paintHudText.setColor(Color.WHITE);
+            paintHudText.setTextSize(boxH * 0.38f);
+            paintHudText.setColor(0xFFFFE08A);
+            canvas.drawText("II", cx, cy + boxH * 0.14f, paintHudText);
+            paintHudText.setTextSize(1f);
+            paintHudText.setColor(0x00000000);
             canvas.drawText("⏸", cx, cy + boxH * 0.22f, paintHudText);
         }
     }
@@ -796,9 +824,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private void drawMenuButton(Canvas canvas, RectF rect, String label, int color) {
         Paint bg = new Paint(Paint.ANTI_ALIAS_FLAG);
         bg.setColor(color);
-        canvas.drawRoundRect(rect, 10f, 10f, bg);
+        canvas.drawRoundRect(rect, 12f, 12f, bg);
 
-        paintHudText.setTextSize(rect.height() * 0.42f);
+        paintHudBorder.setStrokeWidth(Math.max(2f, rect.height() * 0.045f));
+        paintHudBorder.setColor(0xFFD6A94A);
+        canvas.drawRoundRect(rect, 12f, 12f, paintHudBorder);
+
+        paintHudText.setTextSize(rect.height() * 0.38f);
         paintHudText.setColor(Color.WHITE);
         Paint.FontMetrics metrics = paintHudText.getFontMetrics();
         float textY = rect.centerY() - (metrics.ascent + metrics.descent) / 2f;
