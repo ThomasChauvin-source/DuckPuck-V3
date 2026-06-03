@@ -10,93 +10,89 @@
         android:scaleType="centerCrop"
         android:src="@drawable/game_bg" />
 
+    <!-- Menu latéral -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/menuLateral"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:padding="24dp">
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="24dp"
+        android:background="@drawable/bg_menu_border"
+        android:elevation="6dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:id="@+id/menuLateral"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/bg_menu_border"
-            android:elevation="6dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="16dp">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnJouer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:padding="14dp"
+            android:fontFamily="serif"
+            android:text="Jouer"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:background="@drawable/bg_btn_selector" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnJouer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:padding="14dp"
-                android:fontFamily="serif"
-                android:text="Jouer"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:background="@drawable/bg_btn_selector" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnAjouterJoueur"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:padding="14dp"
+            android:fontFamily="serif"
+            android:text="Ajouter Joueur"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:background="@drawable/bg_btn_selector" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnAjouterJoueur"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:padding="14dp"
-                android:fontFamily="serif"
-                android:text="Ajouter Joueur"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:background="@drawable/bg_btn_selector" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnHistorique"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:padding="14dp"
+            android:fontFamily="serif"
+            android:text="Historique"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:background="@drawable/bg_btn_selector" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnHistorique"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:padding="14dp"
-                android:fontFamily="serif"
-                android:text="Historique"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:background="@drawable/bg_btn_selector" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnStatistiques"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:padding="14dp"
+            android:fontFamily="serif"
+            android:text="Statistiques"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:background="@drawable/bg_btn_selector" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnStatistiques"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:padding="14dp"
-                android:fontFamily="serif"
-                android:text="Statistiques"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:background="@drawable/bg_btn_selector" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnParametres"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="14dp"
-                android:fontFamily="serif"
-                android:text="Paramètres"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:background="@drawable/bg_btn_selector" />
-
-        </LinearLayout>
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainerView"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2.2"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_menu_graph" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnParametres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:fontFamily="serif"
+            android:text="Paramètres"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:background="@drawable/bg_btn_selector" />
 
     </LinearLayout>
+
+    <!-- Fragment prend tout l'espace, fond transparent -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_menu_graph" />
+
 </FrameLayout>

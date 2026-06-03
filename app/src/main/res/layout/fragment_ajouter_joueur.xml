@@ -3,40 +3,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Fond -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="-60dp"
-        android:layout_marginRight="-60dp"
-        android:layout_marginTop="-60dp"
-        android:layout_marginBottom="-60dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/finalback" />
+        android:src="@drawable/backbois2"
+        android:scaleType="fitXY" />
 
+    <!-- Contenu -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:orientation="vertical"
+        android:gravity="center"
         android:padding="60dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:fontFamily="serif"
             android:gravity="center"
             android:text="Nouveau Joueur"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="serif" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="Nom du joueur :"
-            android:textColor="#EEEEEE"
+            android:textColor="#FFFFFF"
             android:textSize="14sp" />
 
         <EditText
@@ -44,20 +42,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:backgroundTint="#FFFFFF"
-            android:hint="Ex: Jean"
+            android:hint="Nouveau Joueur"
             android:inputType="textCapWords"
             android:textColor="#FFFFFF"
-            android:textColorHint="#99FFFFFF" />
+            android:textColorHint="#AAFFFFFF"
+            android:backgroundTint="#FFFFFF" />
 
         <Button
             android:id="@+id/btnConfirmerAjout"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:backgroundTint="#2196F3"
             android:text="VALIDER"
             android:textColor="#FFFFFF"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:backgroundTint="#2196F3" />
 
     </LinearLayout>
 

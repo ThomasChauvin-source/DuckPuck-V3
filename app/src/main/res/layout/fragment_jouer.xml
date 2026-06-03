@@ -3,59 +3,82 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1A009688"
+    android:gravity="center"
     android:orientation="horizontal"
-    android:padding="20dp"
-    android:gravity="center">
+    android:padding="20dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/carte1v1"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_weight="1"
         android:layout_margin="10dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardBackgroundColor="#00796B"
         app:cardCornerRadius="15dp"
         app:cardElevation="6dp">
 
-        <TextView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="1 V 1\n(Classique)"
-            android:textAlignment="center"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:fontFamily="serif" />
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/backbois2"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="1 V 1&#10;(Classique)"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:fontFamily="serif" />
+
+        </FrameLayout>
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/carte2v2"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_weight="1"
         android:layout_margin="10dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardBackgroundColor="#004D40"
         app:cardCornerRadius="15dp"
         app:cardElevation="6dp">
 
-        <TextView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="2 V 2\n(Équipe)"
-            android:textAlignment="center"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:fontFamily="serif" />
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/backbois2"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="2 V 2&#10;(Équipe)"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:fontFamily="serif" />
+
+        </FrameLayout>
+
     </androidx.cardview.widget.CardView>
 
 </LinearLayout>
