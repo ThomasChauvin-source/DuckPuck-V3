@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.MotionEvent;
@@ -29,6 +30,7 @@ public class ReplayView extends SurfaceView implements SurfaceHolder.Callback {
     private ReplayThread thread;
     private Bitmap bgBitmap;
     private Bitmap[] malletBitmaps;
+    private Bitmap[] flippedMalletBitmaps;
     private float W;
     private float H;
     private float puckRadius;
@@ -80,12 +82,22 @@ public class ReplayView extends SurfaceView implements SurfaceHolder.Callback {
                 R.drawable.bleucanard
         };
         malletBitmaps = new Bitmap[resIds.length];
+        flippedMalletBitmaps = new Bitmap[resIds.length];
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inScaled = false;
 
         for (int i = 0; i < resIds.length; i++) {
             malletBitmaps[i] = BitmapFactory.decodeResource(getResources(), resIds[i], opts);
+            flippedMalletBitmaps[i] = createFlippedBitmap(malletBitmaps[i]);
         }
+    }
+
+    private Bitmap createFlippedBitmap(Bitmap source) {
+        if (source == null) return null;
+
+        Matrix matrix = new Matrix();
+        matrix.preScale(-1f, 1f);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     @Override
@@ -207,7 +219,11 @@ public class ReplayView extends SurfaceView implements SurfaceHolder.Callback {
     private Bitmap getMalletBitmap(int malletIndex) {
         if (malletBitmaps == null || malletBitmaps.length == 0) return null;
         if (malletIndex < 0) return null;
-        return malletBitmaps[malletIndex % malletBitmaps.length];
+
+        boolean blueSide = malletIndex == 1 || malletIndex == 3;
+        Bitmap[] bitmaps = blueSide ? flippedMalletBitmaps : malletBitmaps;
+        if (bitmaps == null || bitmaps.length == 0) return null;
+        return bitmaps[malletIndex % bitmaps.length];
     }
 
     private void drawOverlay(Canvas canvas, ReplayData.Goal goal) {
