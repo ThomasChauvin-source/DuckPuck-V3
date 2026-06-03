@@ -87,6 +87,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private float puckRadius, malletRadius;
 
     private Bitmap  bgBitmap;
+    private Bitmap  puckBitmap;
     private Bitmap[] malletBitmaps;
     private Bitmap[] flippedMalletBitmaps;
     private Paint   paintPuck, paintShadow, paintGoalFlash;
@@ -143,7 +144,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 .build();
 
         // Son joue quand un striker touche le palet.
-        soundHitId = soundPool.load(context, R.raw.coinsond, 1);
+        soundHitId = soundPool.load(context, R.raw.coincoinvf, 1);
         soundWallId = soundPool.load(context, R.raw.boing, 1);
     }
 
@@ -176,6 +177,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             malletBitmaps[i] = BitmapFactory.decodeResource(getResources(), resIds[i], opts);
             flippedMalletBitmaps[i] = createFlippedBitmap(malletBitmaps[i]);
         }
+    }
+
+    private void loadPuckImage() {
+        if (puckBitmap != null) return;
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inScaled = false;
+        puckBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ballduckpuck, opts);
     }
 
     private Bitmap createFlippedBitmap(Bitmap source) {
@@ -236,6 +245,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private void setupGame() {
         loadBackground();
         loadMalletImages();
+        loadPuckImage();
 
         fLeft   = W * FIELD_LEFT_R;
         fRight  = W * FIELD_RIGHT_R;
@@ -584,6 +594,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private void drawPuckAt(Canvas canvas, float x, float y, float radius, Paint paint) {
         canvas.drawCircle(x + 5, y + 5, radius, paintShadow);
+        if (puckBitmap != null) {
+            RectF dst = new RectF(x - radius, y - radius, x + radius, y + radius);
+            canvas.drawBitmap(puckBitmap, null, dst, null);
+            return;
+        }
         canvas.drawCircle(x, y, radius, paint);
     }
 
