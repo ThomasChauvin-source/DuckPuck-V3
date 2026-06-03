@@ -24,7 +24,7 @@
             android:layout_marginBottom="24dp"
             android:fontFamily="serif"
             android:gravity="center"
-            android:text="Qui va jouer ? 🏓"
+            android:text="Qui va jouer ?"
             android:textColor="#FFFFFF"
             android:textSize="26sp"
             android:textStyle="bold" />
@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="🔴 ÉQUIPE ROUGE"
+                    android:text="ÉQUIPE ROUGE"
                     android:textColor="#FFCDD2"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -91,7 +91,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="🔵 ÉQUIPE BLEUE"
+                    android:text="ÉQUIPE BLEUE"
                     android:textColor="#BBDEFB"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -128,8 +128,8 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="24dp"
-            android:backgroundTint="#4CAF50"
-            android:text="COMMENCER LE MATCH ⚡"
+            android:backgroundTint="#FB011A"
+            android:text="COMMENCER LE MATCH"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
