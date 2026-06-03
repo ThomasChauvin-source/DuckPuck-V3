@@ -83,6 +83,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private float puckRadius, malletRadius;
 
     private Bitmap  bgBitmap;
+    private Bitmap[] malletBitmaps;
     private Paint   paintPuck, paintShadow, paintGoalFlash;
     private Paint   paintHudText, paintHudSub, paintHudPanel, paintHudBorder, paintHudAccent;
     private Paint   paintOverlay;
@@ -151,6 +152,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    private void loadMalletImages() {
+        if (malletBitmaps != null) return;
+
+        int[] resIds = {
+                R.drawable.rougecanard,
+                R.drawable.bleucanard,
+                R.drawable.rougecanard,
+                R.drawable.bleucanard
+        };
+        malletBitmaps = new Bitmap[resIds.length];
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inScaled = false;
+
+        for (int i = 0; i < resIds.length; i++) {
+            malletBitmaps[i] = BitmapFactory.decodeResource(getResources(), resIds[i], opts);
+        }
+    }
+
     private void initPaints() {
         paintShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintShadow.setColor(Color.BLACK);
@@ -200,6 +219,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private void setupGame() {
         loadBackground();
+        loadMalletImages();
 
         fLeft   = W * FIELD_LEFT_R;
         fRight  = W * FIELD_RIGHT_R;
@@ -487,7 +507,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private void drawMallets(Canvas canvas) {
         for (int i = 0; i < mallets.length; i++) {
             Mallet m = mallets[i];
-            drawMalletAt(canvas, m.x, m.y, m.radius, paintMallets[i]);
+            drawMalletAt(canvas, m.x, m.y, m.radius, paintMallets[i], i);
         }
     }
 
@@ -498,12 +518,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private void drawReplayFrame(Canvas canvas, ReplayData.Frame frame) {
         int malletCount = Math.min(frame.malletX.length, frame.malletY.length);
         for (int i = 0; i < malletCount && i < paintMallets.length; i++) {
-            drawMalletAt(canvas, frame.malletX[i] * W, frame.malletY[i] * H, malletRadius, paintMallets[i]);
+            drawMalletAt(canvas, frame.malletX[i] * W, frame.malletY[i] * H, malletRadius, paintMallets[i], i);
         }
         drawPuckAt(canvas, frame.puckX * W, frame.puckY * H, puckRadius, paintPuck);
     }
 
-    private void drawMalletAt(Canvas canvas, float x, float y, float radius, Paint paint) {
+    private void drawMalletAt(Canvas canvas, float x, float y, float radius, Paint paint, int malletIndex) {
+        Bitmap malletBitmap = getMalletBitmap(malletIndex);
+        if (malletBitmap != null) {
+            canvas.drawCircle(x + radius * 0.08f, y + radius * 0.08f, radius, paintShadow);
+            RectF dst = new RectF(x - radius, y - radius, x + radius, y + radius);
+            canvas.drawBitmap(malletBitmap, null, dst, null);
+            return;
+        }
+
         canvas.drawCircle(x + 4, y + 4, radius, paintShadow);
         canvas.drawCircle(x, y, radius, paint);
         Paint shine = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -514,6 +542,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         center.setColor(Color.BLACK);
         center.setAlpha(60);
         canvas.drawCircle(x, y, radius * 0.25f, center);
+    }
+
+    private Bitmap getMalletBitmap(int malletIndex) {
+        if (malletBitmaps == null || malletBitmaps.length == 0) return null;
+        if (malletIndex < 0) return null;
+        return malletBitmaps[malletIndex % malletBitmaps.length];
     }
 
     private void drawPuckAt(Canvas canvas, float x, float y, float radius, Paint paint) {

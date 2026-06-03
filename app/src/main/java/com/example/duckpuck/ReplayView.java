@@ -28,6 +28,7 @@ public class ReplayView extends SurfaceView implements SurfaceHolder.Callback {
 
     private ReplayThread thread;
     private Bitmap bgBitmap;
+    private Bitmap[] malletBitmaps;
     private float W;
     private float H;
     private float puckRadius;
@@ -69,6 +70,24 @@ public class ReplayView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    private void loadMalletImages() {
+        if (malletBitmaps != null) return;
+
+        int[] resIds = {
+                R.drawable.rougecanard,
+                R.drawable.bleucanard,
+                R.drawable.rougecanard,
+                R.drawable.bleucanard
+        };
+        malletBitmaps = new Bitmap[resIds.length];
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inScaled = false;
+
+        for (int i = 0; i < resIds.length; i++) {
+            malletBitmaps[i] = BitmapFactory.decodeResource(getResources(), resIds[i], opts);
+        }
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         goalIndex = 0;
@@ -91,6 +110,7 @@ public class ReplayView extends SurfaceView implements SurfaceHolder.Callback {
         puckRadius = Math.min(fieldW, fieldH) * 0.045f;
         malletRadius = Math.min(fieldW, fieldH) * 0.070f;
         loadBackground();
+        loadMalletImages();
     }
 
     @Override
@@ -155,7 +175,7 @@ public class ReplayView extends SurfaceView implements SurfaceHolder.Callback {
     private void drawFrame(Canvas canvas, ReplayData.Frame frame) {
         int malletCount = Math.min(frame.malletX.length, frame.malletY.length);
         for (int i = 0; i < malletCount && i < malletPaints.length; i++) {
-            drawMallet(canvas, frame.malletX[i] * W, frame.malletY[i] * H, malletPaints[i]);
+            drawMallet(canvas, frame.malletX[i] * W, frame.malletY[i] * H, malletPaints[i], i);
         }
 
         paint.setShader(null);
@@ -164,7 +184,15 @@ public class ReplayView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawCircle(frame.puckX * W, frame.puckY * H, puckRadius, paint);
     }
 
-    private void drawMallet(Canvas canvas, float x, float y, Paint malletPaint) {
+    private void drawMallet(Canvas canvas, float x, float y, Paint malletPaint, int malletIndex) {
+        Bitmap malletBitmap = getMalletBitmap(malletIndex);
+        if (malletBitmap != null) {
+            canvas.drawCircle(x + malletRadius * 0.08f, y + malletRadius * 0.08f, malletRadius, shadowPaint);
+            RectF dst = new RectF(x - malletRadius, y - malletRadius, x + malletRadius, y + malletRadius);
+            canvas.drawBitmap(malletBitmap, null, dst, null);
+            return;
+        }
+
         canvas.drawCircle(x + 4, y + 4, malletRadius, shadowPaint);
         canvas.drawCircle(x, y, malletRadius, malletPaint);
         paint.setColor(Color.WHITE);
@@ -174,6 +202,12 @@ public class ReplayView extends SurfaceView implements SurfaceHolder.Callback {
         paint.setAlpha(60);
         canvas.drawCircle(x, y, malletRadius * 0.25f, paint);
         paint.setAlpha(255);
+    }
+
+    private Bitmap getMalletBitmap(int malletIndex) {
+        if (malletBitmaps == null || malletBitmaps.length == 0) return null;
+        if (malletIndex < 0) return null;
+        return malletBitmaps[malletIndex % malletBitmaps.length];
     }
 
     private void drawOverlay(Canvas canvas, ReplayData.Goal goal) {
