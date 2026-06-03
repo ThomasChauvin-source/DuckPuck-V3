@@ -1,10 +1,12 @@
 package com.example.duckpuck;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -39,11 +41,15 @@ public class HistoriqueFragment extends Fragment {
         dbExecutor.execute(() -> {
             AppDao dao = AppDatabase.getInstance(appContext).appDao();
             List<PartieAvecJoueurs> historique = dao.getHistoriqueParties();
-            List<String> lignes = new ArrayList<>();
+            List<LigneHistorique> lignes = new ArrayList<>();
 
             if (historique != null) {
                 for (PartieAvecJoueurs item : historique) {
-                    lignes.add(formatPartie(dao, item));
+                    lignes.add(new LigneHistorique(
+                            item.partie.id_partie,
+                            formatPartie(dao, item),
+                            item.partie.replay_data != null && !item.partie.replay_data.trim().isEmpty()
+                    ));
                 }
             }
 
@@ -59,19 +65,31 @@ public class HistoriqueFragment extends Fragment {
 
                     listeParties.removeAllViews();
 
-                    for (String texte : lignes) {
+                    for (LigneHistorique ligne : lignes) {
                         TextView tv = new TextView(requireContext());
                         tv.setPadding(16, 20, 16, 20);
                         tv.setTextSize(16f);
                         tv.setTextColor(0xFFFFFFFF);
-                        tv.setText(texte);
+                        tv.setText(ligne.texte);
+
+                        listeParties.addView(tv);
+
+                        if (ligne.hasReplay) {
+                            Button btnReplay = new Button(requireContext());
+                            btnReplay.setText("Voir les replays");
+                            btnReplay.setOnClickListener(v -> {
+                                Intent intent = new Intent(requireContext(), ReplayActivity.class);
+                                intent.putExtra(ReplayActivity.EXTRA_PARTIE_ID, ligne.partieId);
+                                startActivity(intent);
+                            });
+                            listeParties.addView(btnReplay);
+                        }
 
                         View separator = new View(requireContext());
                         separator.setLayoutParams(new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT, 1));
                         separator.setBackgroundColor(0x33FFFFFF);
 
-                        listeParties.addView(tv);
                         listeParties.addView(separator);
                     }
                 });
@@ -114,6 +132,18 @@ public class HistoriqueFragment extends Fragment {
 
     private String valueOrDash(StringBuilder builder) {
         return builder.length() == 0 ? "-" : builder.toString();
+    }
+
+    private static class LigneHistorique {
+        final int partieId;
+        final String texte;
+        final boolean hasReplay;
+
+        LigneHistorique(int partieId, String texte, boolean hasReplay) {
+            this.partieId = partieId;
+            this.texte = texte;
+            this.hasReplay = hasReplay;
+        }
     }
 
     @Override

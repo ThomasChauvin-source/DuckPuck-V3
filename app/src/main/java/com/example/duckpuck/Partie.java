@@ -13,4 +13,5 @@ public class Partie {
     public int score_equipe2;
     public int temps;
     public boolean arretee;
+    public String replay_data;
 }

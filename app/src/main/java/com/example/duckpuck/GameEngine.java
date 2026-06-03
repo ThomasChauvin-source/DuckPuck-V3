@@ -13,8 +13,12 @@ public class GameEngine {
     private float goalWidth;
     private RectF[] customWalls = new RectF[0];
 
-    private static final float RESTITUTION    = 1.0f;
-    private static final float IMPULSE_FACTOR = 2.0f;
+    private static final float WALL_RESTITUTION = 0.94f;
+    private static final float WALL_TANGENT_DAMPING = 0.985f;
+    private static final float MALLET_RESTITUTION = 0.88f;
+    private static final float MALLET_TRANSFER = 0.45f;
+    private static final float MALLET_SPIN_TRANSFER = 0.12f;
+    private static final float MIN_HIT_BOOST = 4.2f;
 
     public GameEngine(float fLeft, float fRight, float fTop, float fBottom, float goalWidth) {
         this.fLeft     = fLeft;
@@ -37,11 +41,13 @@ public class GameEngine {
 
         if (puck.y - puck.radius < fTop) {
             puck.y  = fTop + puck.radius;
-            puck.vy = Math.abs(puck.vy) * RESTITUTION;
+            puck.vy = Math.abs(puck.vy) * WALL_RESTITUTION;
+            puck.vx *= WALL_TANGENT_DAMPING;
         }
         if (puck.y + puck.radius > fBottom) {
             puck.y  = fBottom - puck.radius;
-            puck.vy = -Math.abs(puck.vy) * RESTITUTION;
+            puck.vy = -Math.abs(puck.vy) * WALL_RESTITUTION;
+            puck.vx *= WALL_TANGENT_DAMPING;
         }
 
         float fH      = fBottom - fTop;
@@ -53,7 +59,8 @@ public class GameEngine {
                 return 2;
             } else {
                 puck.x  = fLeft + puck.radius;
-                puck.vx = Math.abs(puck.vx) * RESTITUTION;
+                puck.vx = Math.abs(puck.vx) * WALL_RESTITUTION;
+                puck.vy *= WALL_TANGENT_DAMPING;
             }
         }
 
@@ -62,9 +69,11 @@ public class GameEngine {
                 return 1;
             } else {
                 puck.x  = fRight - puck.radius;
-                puck.vx = -Math.abs(puck.vx) * RESTITUTION;
+                puck.vx = -Math.abs(puck.vx) * WALL_RESTITUTION;
+                puck.vy *= WALL_TANGENT_DAMPING;
             }
         }
+        puck.clampSpeed();
 
         for (RectF wall : customWalls) {
             resolveRectCollision(puck, wall);
@@ -94,17 +103,22 @@ public class GameEngine {
 
         if (minD == dLeft) {
             puck.x  = left;
-            puck.vx = -Math.abs(puck.vx) * RESTITUTION;
+            puck.vx = -Math.abs(puck.vx) * WALL_RESTITUTION;
+            puck.vy *= WALL_TANGENT_DAMPING;
         } else if (minD == dRight) {
             puck.x  = right;
-            puck.vx = Math.abs(puck.vx) * RESTITUTION;
+            puck.vx = Math.abs(puck.vx) * WALL_RESTITUTION;
+            puck.vy *= WALL_TANGENT_DAMPING;
         } else if (minD == dTop) {
             puck.y  = top;
-            puck.vy = -Math.abs(puck.vy) * RESTITUTION;
+            puck.vy = -Math.abs(puck.vy) * WALL_RESTITUTION;
+            puck.vx *= WALL_TANGENT_DAMPING;
         } else {
             puck.y  = bottom;
-            puck.vy = Math.abs(puck.vy) * RESTITUTION;
+            puck.vy = Math.abs(puck.vy) * WALL_RESTITUTION;
+            puck.vx *= WALL_TANGENT_DAMPING;
         }
+        puck.clampSpeed();
     }
 
     private void resolveMalletCollision(Puck puck, Mallet mallet, int malletIndex) {
@@ -122,14 +136,25 @@ public class GameEngine {
         puck.x += nx * overlap;
         puck.y += ny * overlap;
 
-        float mvx  = mallet.getVelocityX();
-        float mvy  = mallet.getVelocityY();
+        float mvx  = clamp(mallet.getVelocityX(), -24f, 24f);
+        float mvy  = clamp(mallet.getVelocityY(), -24f, 24f);
+        float malletSpeed = (float) Math.sqrt(mvx * mvx + mvy * mvy);
         float relVn = (puck.vx - mvx) * nx + (puck.vy - mvy) * ny;
 
-        if (relVn < 0) {
-            float impulse = -(1 + RESTITUTION) * relVn;
-            puck.vx += impulse * nx + mvx * IMPULSE_FACTOR;
-            puck.vy += impulse * ny + mvy * IMPULSE_FACTOR;
+        if (relVn < 0 || malletSpeed > 0.8f) {
+            float approach = Math.max(0f, -relVn);
+            float impulse = Math.max(MIN_HIT_BOOST, approach * (1f + MALLET_RESTITUTION));
+            float tangentX = -ny;
+            float tangentY = nx;
+            float tangentSpeed = mvx * tangentX + mvy * tangentY;
+
+            puck.vx += impulse * nx
+                    + mvx * MALLET_TRANSFER
+                    + tangentX * tangentSpeed * MALLET_SPIN_TRANSFER;
+            puck.vy += impulse * ny
+                    + mvy * MALLET_TRANSFER
+                    + tangentY * tangentSpeed * MALLET_SPIN_TRANSFER;
+            puck.clampSpeed();
 
             if (collisionListener != null) {
                 collisionListener.onMalletHit(malletIndex);
@@ -142,5 +167,9 @@ public class GameEngine {
         this.fRight  = right;
         this.fTop    = top;
         this.fBottom = bottom;
+    }
+
+    private float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
     }
 }

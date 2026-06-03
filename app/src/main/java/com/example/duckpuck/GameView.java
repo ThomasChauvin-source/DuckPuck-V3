@@ -15,6 +15,10 @@ import android.view.SurfaceView;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     // ── Modes de jeu ──────────────────────────────────────────────────────
@@ -22,8 +26,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public static final int MODE_4P = 4;
 
     // ── Paramètres de jeu ─────────────────────────────────────────────────
-    private static final int   MAX_SCORE    = 7;
+    private static final int   TOTAL_PUCKS  = 10;
     private static final long  FRAME_MS     = 36;   // ~60 FPS
+    private static final long  REPLAY_MS    = 5000;
 
     private static final float FIELD_LEFT_R   = 0.085f;
     private static final float FIELD_RIGHT_R  = 0.914f;
@@ -56,7 +61,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int soundHitId = 0;
 
     // ── État du jeu ───────────────────────────────────────────────────────
-    private enum GameState { COUNTDOWN, PLAYING, GOAL, PAUSED, GAME_OVER }
+    private enum GameState { COUNTDOWN, PLAYING, REPLAY, GOAL, PAUSED, GAME_OVER }
     private GameState state      = GameState.COUNTDOWN;
     private GameState stateBeforePause;
 
@@ -79,7 +84,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Bitmap  bgBitmap;
     private Paint   paintPuck, paintShadow, paintGoalFlash;
-    private Paint   paintHudText, paintHudSub;
+    private Paint   paintHudText, paintHudSub, paintHudPanel, paintHudBorder, paintHudAccent;
     private Paint   paintOverlay;
     private Paint[] paintMallets;
     private RectF   screenRect;
@@ -92,6 +97,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int[] malletPointerIds;
     private int[] playerGoals;
     private int lastHitMalletIndex = -1;
+    private final ArrayDeque<ReplayData.Frame> replayBuffer = new ArrayDeque<>();
+    private final ArrayList<ReplayData.Goal> goalReplays = new ArrayList<>();
+    private List<ReplayData.Frame> activeReplayFrames = new ArrayList<>();
+    private long replayStartTime;
+    private long activeReplayDuration;
+    private ReplayData.Frame currentReplayFrame;
 
     public interface GameListener {
         void onGameOver(int winnerTeam, int[] scores);
@@ -155,6 +166,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         paintOverlay = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintOverlay.setColor(Color.BLACK);
         paintOverlay.setAlpha(140);
+
+        paintHudPanel = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintHudPanel.setColor(0xAA142436);
+
+        paintHudBorder = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintHudBorder.setStyle(Paint.Style.STROKE);
+        paintHudBorder.setStrokeWidth(3f);
+        paintHudBorder.setColor(0xFFD6A94A);
+
+        paintHudAccent = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintHudAccent.setColor(0xFFD6A94A);
 
         paintHudText = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintHudText.setColor(Color.WHITE);
@@ -292,13 +314,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             case PLAYING:
                 int result = engine.update(puck, mallets);
                 updatePuckGradient();
+                recordReplayFrame(now);
                 if (result == 1) { scores[0]++; lastScorer = 1; creditGoal(result); onGoal(); }
                 else if (result == 2) { scores[1]++; lastScorer = 2; creditGoal(result); onGoal(); }
                 break;
 
+            case REPLAY:
+                updateReplayFrame(now);
+                if (now - replayStartTime >= activeReplayDuration) {
+                    currentReplayFrame = null;
+                    state = GameState.GOAL;
+                    goalDisplayTime = now;
+                }
+                break;
+
             case GOAL:
                 if (now - goalDisplayTime >= 2000) {
-                    if (scores[0] >= MAX_SCORE || scores[1] >= MAX_SCORE) {
+                    if (getTotalGoals() >= TOTAL_PUCKS) {
                         state = GameState.GAME_OVER;
                         notifyGameOver();
                     } else {
@@ -315,8 +347,63 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void onGoal() {
-        state = GameState.GOAL;
-        goalDisplayTime = System.currentTimeMillis();
+        ReplayData.Goal replay = buildGoalReplay();
+        if (!replay.frames.isEmpty()) {
+            goalReplays.add(replay);
+            activeReplayFrames = replay.frames;
+            activeReplayDuration = getReplayDuration(activeReplayFrames);
+            replayStartTime = System.currentTimeMillis();
+            currentReplayFrame = activeReplayFrames.get(0);
+            state = GameState.REPLAY;
+        } else {
+            state = GameState.GOAL;
+            goalDisplayTime = System.currentTimeMillis();
+        }
+    }
+
+    private void recordReplayFrame(long now) {
+        if (puck == null || mallets == null || W <= 0 || H <= 0) return;
+
+        float[] mx = new float[mallets.length];
+        float[] my = new float[mallets.length];
+        for (int i = 0; i < mallets.length; i++) {
+            mx[i] = mallets[i].x / W;
+            my[i] = mallets[i].y / H;
+        }
+
+        replayBuffer.addLast(new ReplayData.Frame(now, puck.x / W, puck.y / H, mx, my));
+        while (!replayBuffer.isEmpty() && now - replayBuffer.peekFirst().timeMs > REPLAY_MS) {
+            replayBuffer.removeFirst();
+        }
+    }
+
+    private ReplayData.Goal buildGoalReplay() {
+        ReplayData.Goal replay = new ReplayData.Goal();
+        replay.scorer = lastScorer;
+        replay.scoreRed = scores[0];
+        replay.scoreBlue = scores[1];
+        replay.frames.addAll(replayBuffer);
+        return replay;
+    }
+
+    private long getReplayDuration(List<ReplayData.Frame> frames) {
+        if (frames == null || frames.size() < 2) return 1200;
+        long duration = frames.get(frames.size() - 1).timeMs - frames.get(0).timeMs;
+        return Math.max(1200, duration);
+    }
+
+    private void updateReplayFrame(long now) {
+        if (activeReplayFrames == null || activeReplayFrames.isEmpty()) return;
+
+        long replayTime = activeReplayFrames.get(0).timeMs + (now - replayStartTime);
+        ReplayData.Frame selected = activeReplayFrames.get(activeReplayFrames.size() - 1);
+        for (ReplayData.Frame frame : activeReplayFrames) {
+            if (frame.timeMs >= replayTime) {
+                selected = frame;
+                break;
+            }
+        }
+        currentReplayFrame = selected;
     }
 
     private void creditGoal(int scoringTeam) {
@@ -347,18 +434,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             mallets[3].reset(fLeft + fW * 0.90f, fTop + fH * 0.65f);
         }
         for (int i = 0; i < malletPointerIds.length; i++) malletPointerIds[i] = -1;
+        replayBuffer.clear();
     }
 
     private void startCountdown() {
         countdownValue    = 3;
         lastCountdownTime = System.currentTimeMillis();
         state             = GameState.COUNTDOWN;
+        replayBuffer.clear();
     }
 
     private void notifyGameOver() {
         if (listener == null) return;
-        int winner = scores[0] >= MAX_SCORE ? 1 : 2;
+        int winner = scores[0] > scores[1] ? 1 : (scores[1] > scores[0] ? 2 : 0);
         mainHandler.post(() -> listener.onGameOver(winner, scores));
+    }
+
+    private int getTotalGoals() {
+        return scores[0] + scores[1];
     }
 
     private void draw() {
@@ -368,8 +461,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (canvas == null) return;
         try {
             drawBackground(canvas);
-            drawMallets(canvas);
-            drawPuck(canvas);
+            if (state == GameState.REPLAY && currentReplayFrame != null) {
+                drawReplayFrame(canvas, currentReplayFrame);
+            } else {
+                drawMallets(canvas);
+                drawPuck(canvas);
+            }
             drawHUD(canvas);
             drawOverlay(canvas);
         } finally {
@@ -390,22 +487,38 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private void drawMallets(Canvas canvas) {
         for (int i = 0; i < mallets.length; i++) {
             Mallet m = mallets[i];
-            canvas.drawCircle(m.x + 4, m.y + 4, m.radius, paintShadow);
-            canvas.drawCircle(m.x, m.y, m.radius, paintMallets[i]);
-            Paint shine = new Paint(Paint.ANTI_ALIAS_FLAG);
-            shine.setColor(Color.WHITE);
-            shine.setAlpha(80);
-            canvas.drawCircle(m.x - m.radius * 0.25f, m.y - m.radius * 0.25f, m.radius * 0.35f, shine);
-            Paint center = new Paint(Paint.ANTI_ALIAS_FLAG);
-            center.setColor(Color.BLACK);
-            center.setAlpha(60);
-            canvas.drawCircle(m.x, m.y, m.radius * 0.25f, center);
+            drawMalletAt(canvas, m.x, m.y, m.radius, paintMallets[i]);
         }
     }
 
     private void drawPuck(Canvas canvas) {
-        canvas.drawCircle(puck.x + 5, puck.y + 5, puck.radius, paintShadow);
-        canvas.drawCircle(puck.x, puck.y, puck.radius, paintPuck);
+        drawPuckAt(canvas, puck.x, puck.y, puck.radius, paintPuck);
+    }
+
+    private void drawReplayFrame(Canvas canvas, ReplayData.Frame frame) {
+        int malletCount = Math.min(frame.malletX.length, frame.malletY.length);
+        for (int i = 0; i < malletCount && i < paintMallets.length; i++) {
+            drawMalletAt(canvas, frame.malletX[i] * W, frame.malletY[i] * H, malletRadius, paintMallets[i]);
+        }
+        drawPuckAt(canvas, frame.puckX * W, frame.puckY * H, puckRadius, paintPuck);
+    }
+
+    private void drawMalletAt(Canvas canvas, float x, float y, float radius, Paint paint) {
+        canvas.drawCircle(x + 4, y + 4, radius, paintShadow);
+        canvas.drawCircle(x, y, radius, paint);
+        Paint shine = new Paint(Paint.ANTI_ALIAS_FLAG);
+        shine.setColor(Color.WHITE);
+        shine.setAlpha(80);
+        canvas.drawCircle(x - radius * 0.25f, y - radius * 0.25f, radius * 0.35f, shine);
+        Paint center = new Paint(Paint.ANTI_ALIAS_FLAG);
+        center.setColor(Color.BLACK);
+        center.setAlpha(60);
+        canvas.drawCircle(x, y, radius * 0.25f, center);
+    }
+
+    private void drawPuckAt(Canvas canvas, float x, float y, float radius, Paint paint) {
+        canvas.drawCircle(x + 5, y + 5, radius, paintShadow);
+        canvas.drawCircle(x, y, radius, paint);
     }
 
     private void drawHUD(Canvas canvas) {
@@ -424,8 +537,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawText(String.valueOf(scores[0]), cx1, hudCYr + boxH * 0.28f, paintHudText);
 
         float cx2 = hudBox2.centerX();
-        int totalGoals   = scores[0] + scores[1];
-        int paletsLeft   = (MAX_SCORE * 2) - totalGoals;
+        int totalGoals   = getTotalGoals();
+        int paletsLeft   = Math.max(0, TOTAL_PUCKS - totalGoals);
         paintHudText.setTextSize(scoreSize * 0.75f);
         paintHudSub.setColor(0xFFFFD700);
         canvas.drawText("PALETS", cx2, hudCYr - boxH * 0.08f, paintHudSub);
@@ -483,6 +596,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 paintHudText.setColor(teamColor);
                 String team = lastScorer == 1 ? "Équipe Rouge" : "Équipe Bleue";
                 canvas.drawText(team, fLeft + fW / 2f, fTop + fH * 0.58f, paintHudText);
+                break;
+            }
+            case REPLAY: {
+                paintOverlay.setAlpha(70);
+                canvas.drawRect(screenRect, paintOverlay);
+                paintHudText.setTextSize(fH * 0.12f);
+                paintHudText.setColor(Color.WHITE);
+                canvas.drawText("REPLAY", fLeft + fW / 2f, fTop + fH * 0.20f, paintHudText);
+                paintHudText.setTextSize(fH * 0.055f);
+                int teamColor = lastScorer == 1 ? COLOR_P1 : COLOR_P2;
+                paintHudText.setColor(teamColor);
+                String team = lastScorer == 1 ? "But Rouge" : "But Bleu";
+                canvas.drawText(team, fLeft + fW / 2f, fTop + fH * 0.29f, paintHudText);
                 break;
             }
             case PAUSED: {
@@ -684,5 +810,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public int[] getPlayerGoals() {
         return playerGoals != null ? playerGoals.clone() : new int[0];
+    }
+
+    public String getReplayData() {
+        return ReplayData.toJson(goalReplays);
     }
 }

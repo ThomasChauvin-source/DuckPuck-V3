@@ -3,13 +3,14 @@ package com.example.duckpuck;
 public class Puck {
 
     public float x, y;
-    public float vx, vy; // vitesse
+    public float vx, vy;
     public float radius;
 
-    private static final float FRICTION = 0.999f;
-    private static final float MAX_SPEED = 40f;
-    private static final float SPEED_MULTIPLIER = 1.3f;
-
+    private static final float FAST_FRICTION = 0.992f;
+    private static final float SLOW_FRICTION = 0.985f;
+    private static final float STOP_SPEED = 0.08f;
+    private static final float MAX_SPEED = 32f;
+    private static final float SPEED_MULTIPLIER = 1.12f;
 
     public Puck(float x, float y, float radius) {
         this.x = x;
@@ -23,16 +24,16 @@ public class Puck {
         x += vx * SPEED_MULTIPLIER;
         y += vy * SPEED_MULTIPLIER;
 
-        // Friction légère
-        vx *= FRICTION;
-        vy *= FRICTION;
+        float speed = getSpeed();
+        float friction = speed > 12f ? FAST_FRICTION : SLOW_FRICTION;
+        vx *= friction;
+        vy *= friction;
 
-        // Limiter la vitesse max
-        float speed = (float) Math.sqrt(vx * vx + vy * vy);
-        if (speed > MAX_SPEED) {
-            vx = (vx / speed) * MAX_SPEED;
-            vy = (vy / speed) * MAX_SPEED;
+        if (speed < STOP_SPEED) {
+            vx = 0;
+            vy = 0;
         }
+        clampSpeed();
     }
 
     public void reset(float cx, float cy) {
@@ -45,5 +46,18 @@ public class Puck {
     public void applyVelocity(float dvx, float dvy) {
         vx += dvx;
         vy += dvy;
+        clampSpeed();
+    }
+
+    public float getSpeed() {
+        return (float) Math.sqrt(vx * vx + vy * vy);
+    }
+
+    public void clampSpeed() {
+        float speed = getSpeed();
+        if (speed > MAX_SPEED) {
+            vx = (vx / speed) * MAX_SPEED;
+            vy = (vy / speed) * MAX_SPEED;
+        }
     }
 }

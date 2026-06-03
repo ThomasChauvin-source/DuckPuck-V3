@@ -43,6 +43,9 @@ public interface AppDao {
     @Query("SELECT * FROM Joueur WHERE id_joueur = :id")
     Joueur getJoueurById(int id);
 
+    @Query("SELECT * FROM Partie WHERE id_partie = :id")
+    Partie getPartieById(int id);
+
     // ── Nom d'un joueur par son id ────────────────────────────────────────
     @Query("SELECT nom FROM Joueur WHERE id_joueur = :id")
     String getNomJoueur(int id);

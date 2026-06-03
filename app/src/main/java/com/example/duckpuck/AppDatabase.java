@@ -7,7 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Joueur.class, Partie.class, Participer.class}, version = 2)
+@Database(entities = {Joueur.class, Partie.class, Participer.class}, version = 3)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract AppDao appDao();
@@ -16,6 +16,13 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE Partie ADD COLUMN arretee INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
+    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE Partie ADD COLUMN replay_data TEXT");
         }
     };
 
@@ -31,7 +38,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             AppDatabase.class,
                             "duckpuck_db"
                     )
-                            .addMigrations(MIGRATION_1_2)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                             .build();
                 }
             }

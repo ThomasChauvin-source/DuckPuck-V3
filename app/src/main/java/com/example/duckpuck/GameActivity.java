@@ -61,14 +61,21 @@ public class GameActivity extends AppCompatActivity implements GameView.GameList
 
     @Override
     public void onGameOver(int winnerTeam, int[] scores) {
-        sauvegarderPartie(winnerTeam, scores, gameView.getPlayerGoals(), false);
+        sauvegarderPartie(winnerTeam, scores, gameView.getPlayerGoals(), gameView.getReplayData(), false);
 
-        String winnerName = winnerTeam == 1 ? "Equipe Rouge" : "Equipe Bleue";
-        String message = winnerName + " gagne !\n\n"
-                + "Rouge : " + scores[0] + " - Bleu : " + scores[1];
+        String title = winnerTeam == 0 ? "Fin de partie - egalite" : "Fin de partie";
+        String message;
+        if (winnerTeam == 0) {
+            message = "Egalite apres 10 palets !\n\n"
+                    + "Rouge : " + scores[0] + " - Bleu : " + scores[1];
+        } else {
+            String winnerName = winnerTeam == 1 ? "Equipe Rouge" : "Equipe Bleue";
+            message = winnerName + " gagne !\n\n"
+                    + "Rouge : " + scores[0] + " - Bleu : " + scores[1];
+        }
 
         new AlertDialog.Builder(this)
-                .setTitle("Fin de partie")
+                .setTitle(title)
                 .setMessage(message)
                 .setCancelable(false)
                 .setPositiveButton("Rejouer", (dialog, which) -> recreate())
@@ -87,14 +94,14 @@ public class GameActivity extends AppCompatActivity implements GameView.GameList
                 .setTitle("Quitter la partie")
                 .setMessage("La partie sera enregistree comme arretee en cours.")
                 .setPositiveButton("Quitter", (dialog, which) -> {
-                    sauvegarderPartie(0, gameView.getCurrentScores(), gameView.getPlayerGoals(), true);
+                    sauvegarderPartie(0, gameView.getCurrentScores(), gameView.getPlayerGoals(), gameView.getReplayData(), true);
                     finish();
                 })
                 .setNegativeButton("Annuler", null)
                 .show();
     }
 
-    private void sauvegarderPartie(int winnerTeam, int[] scores, int[] butsParMallet, boolean arretee) {
+    private void sauvegarderPartie(int winnerTeam, int[] scores, int[] butsParMallet, String replayData, boolean arretee) {
         if (partieSauvegardee) return;
         partieSauvegardee = true;
         int dureeSecondes = Math.max(0, (int) ((System.currentTimeMillis() - startTimeMillis) / 1000L));
@@ -107,6 +114,7 @@ public class GameActivity extends AppCompatActivity implements GameView.GameList
             partie.score_equipe2 = scores[1];
             partie.temps = dureeSecondes;
             partie.arretee = arretee;
+            partie.replay_data = replayData;
             long partieId = dao.insertPartie(partie);
 
             int[] eq1Ids = getIntent().getIntArrayExtra(EXTRA_EQUIPE_1_IDS);

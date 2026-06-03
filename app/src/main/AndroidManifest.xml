@@ -10,7 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DuckPuck"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round">>
+        android:roundIcon="@mipmap/ic_launcher_round">
+        <activity
+            android:name=".ReplayActivity" />
         <activity
             android:name=".GameActivity" />
         <activity
