@@ -117,15 +117,35 @@
         </LinearLayout>
 
         <!-- Bouton -->
-        <Button
-            android:id="@+id/btnCommencer"
+        <!-- Bouton IMAGE -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#E60012"
-            android:text="COMMENCER LE MATCH"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold" />
+            android:layout_height="90dp"
+            android:layout_marginTop="20dp">
+
+            <!-- Image du bouton (CORRIGÉ) -->
+            <ImageView
+                android:id="@+id/btnCommencer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/blancboutton"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Commencer le match" />
+
+            <!-- Texte sur le bouton -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="COMMENCER LE MATCH"
+                android:textColor="#2B1E1E"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+        </FrameLayout>
 
     </LinearLayout>
 
