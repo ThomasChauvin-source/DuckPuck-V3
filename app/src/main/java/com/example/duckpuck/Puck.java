@@ -9,8 +9,8 @@ public class Puck {
     private static final float FAST_FRICTION = 0.994f;
     private static final float SLOW_FRICTION = 0.989f;
     private static final float STOP_SPEED = 0.10f;
-    private static final float BASE_MAX_SPEED = 46f;
-    private static final float BASE_SPEED_MULTIPLIER = 1.34f;
+    private static final float BASE_MAX_SPEED = 35f;
+    private static final float BASE_SPEED_MULTIPLIER = 1.24f;
 
     private float speedScale = 1f;
 

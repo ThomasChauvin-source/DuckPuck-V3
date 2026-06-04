@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -48,7 +47,7 @@ public class ChoixJoueursFragment extends Fragment {
         spinnerEq2J1 = view.findViewById(R.id.spinnerEq2Joueur1);
         spinnerEq2J2 = view.findViewById(R.id.spinnerEq2Joueur2);
         checkReplay = view.findViewById(R.id.checkReplay);
-        Button btnLancer = view.findViewById(R.id.btnLancerMatch);
+        View btnLancer = view.findViewById(R.id.btnLancerMatch);
 
         is2v2 = getArguments() != null && getArguments().getBoolean("is2v2", false);
 

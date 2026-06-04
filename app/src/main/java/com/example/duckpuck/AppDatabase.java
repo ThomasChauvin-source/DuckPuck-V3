@@ -7,6 +7,8 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.io.File;
+
 @Database(entities = {Joueur.class, Partie.class, Participer.class}, version = 3)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -33,10 +35,13 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
+                    Context appContext = context.getApplicationContext();
+                    String databaseName = getDatabaseName(appContext);
+
                     INSTANCE = Room.databaseBuilder(
-                            context.getApplicationContext(),
+                            appContext,
                             AppDatabase.class,
-                            "duckpuck_db"
+                            databaseName
                     )
                             .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                             .build();
@@ -44,5 +49,23 @@ public abstract class AppDatabase extends RoomDatabase {
             }
         }
         return INSTANCE;
+    }
+
+    private static String getDatabaseName(Context context) {
+        File externalDirectory = context.getExternalFilesDir("databases");
+        if (externalDirectory != null && (externalDirectory.exists() || externalDirectory.mkdirs())) {
+            return new File(externalDirectory, "duckpuck_db").getAbsolutePath();
+        }
+
+        ensureDatabaseDirectory(context);
+        return "duckpuck_db";
+    }
+
+    private static void ensureDatabaseDirectory(Context context) {
+        File databaseFile = context.getDatabasePath("duckpuck_db");
+        File databaseDirectory = databaseFile.getParentFile();
+        if (databaseDirectory != null && !databaseDirectory.exists()) {
+            databaseDirectory.mkdirs();
+        }
     }
 }

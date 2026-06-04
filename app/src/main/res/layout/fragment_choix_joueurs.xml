@@ -116,14 +116,29 @@
 
         </LinearLayout>
 
+        <CheckBox
+            android:id="@+id/checkReplay"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:buttonTint="#FFFFFF"
+            android:checked="true"
+            android:fontFamily="serif"
+            android:text="Activer les replays"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
         <!-- Bouton -->
         <!-- Bouton IMAGE -->
         <FrameLayout
+            android:id="@+id/btnLancerMatch"
             android:layout_width="match_parent"
             android:layout_height="90dp"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:focusable="true">
 
-            <!-- Image du bouton (CORRIGÉ) -->
             <ImageView
                 android:id="@+id/btnCommencer"
                 android:layout_width="match_parent"
@@ -131,11 +146,8 @@
                 android:src="@drawable/blancboutton"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:clickable="true"
-                android:focusable="true"
                 android:contentDescription="Commencer le match" />
 
-            <!-- Texte sur le bouton -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
