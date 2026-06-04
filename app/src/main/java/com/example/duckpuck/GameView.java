@@ -50,6 +50,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final float PUCK_RADIUS_RATIO   = 0.045f;
     private static final float MALLET_RADIUS_RATIO = 0.070f;
+    private static final float PUCK_SPIN_HIT_FACTOR = 2.0f;
+    private static final float PUCK_SPIN_SPEED_FACTOR = 2.6f;
+    private static final float PUCK_SPIN_MAX = 70f;
+    private static final float PUCK_SPIN_DAMPING = 0.86f;
+    private static final float PUCK_SPIN_STOP = 0.08f;
 
     private static final int COLOR_PUCK = 0xFFE0E0E0;
     private static final int COLOR_P1   = 0xFFFF5252;
@@ -61,6 +66,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private SoundPool soundPool;
     private int soundHitId = 0;
     private int soundWallId = 0;
+    private int soundGoalId = 0;
     private long lastWallSoundTime = 0;
     private static final long WALL_SOUND_COOLDOWN_MS = 120;
 
@@ -85,6 +91,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private float fW, fH;
     private float goalWidth;
     private float puckRadius, malletRadius;
+    private float puckRotationDegrees = 0f;
+    private float puckSpinVelocity = 0f;
+    private float puckSpinDirection = 1f;
 
     private Bitmap  bgBitmap;
     private Bitmap  puckBitmap;
@@ -146,6 +155,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         // Son joue quand un striker touche le palet.
         soundHitId = soundPool.load(context, R.raw.coincoinvf, 1);
         soundWallId = soundPool.load(context, R.raw.boing, 1);
+        soundGoalId = soundPool.load(context, R.raw.wowpublic, 1);
     }
 
     private void loadBackground() {
@@ -273,6 +283,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         float cy = fTop  + fH / 2f;
 
         puck = new Puck(cx, cy, puckRadius);
+        puck.setSpeedScale(getPuckSpeedScale());
 
         if (mode == MODE_2P) {
             mallets = new Mallet[2];
@@ -305,6 +316,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             @Override
             public void onMalletHit(int malletIndex) {
                 lastHitMalletIndex = malletIndex;
+                startPuckSpin(malletIndex);
                 if (soundPool != null && soundHitId != 0) {
                     // Lecture instantanée du bruitage sans latence
                     float volume = AudioSettings.getSfxVolume(getContext());
@@ -340,6 +352,41 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         paintPuck.setShader(gradient);
     }
 
+    private void startPuckSpin(int malletIndex) {
+        if (puck == null) return;
+
+        float speed = puck.getSpeed();
+        puckSpinDirection = (malletIndex == 1 || malletIndex == 3) ? -1f : 1f;
+        if (Math.abs(puck.vy) > Math.abs(puck.vx)) {
+            puckSpinDirection *= puck.vy >= 0f ? 1f : -1f;
+        }
+        puckSpinVelocity = clamp(speed * PUCK_SPIN_HIT_FACTOR * puckSpinDirection, -PUCK_SPIN_MAX, PUCK_SPIN_MAX);
+    }
+
+    private void updatePuckRotation() {
+        if (puck != null) {
+            float targetSpin = clamp(
+                    puck.getSpeed() * PUCK_SPIN_SPEED_FACTOR * puckSpinDirection,
+                    -PUCK_SPIN_MAX,
+                    PUCK_SPIN_MAX
+            );
+            puckSpinVelocity = puckSpinVelocity * PUCK_SPIN_DAMPING + targetSpin * (1f - PUCK_SPIN_DAMPING);
+        }
+        puckRotationDegrees = (puckRotationDegrees + puckSpinVelocity) % 360f;
+        if (Math.abs(puckSpinVelocity) < PUCK_SPIN_STOP) {
+            puckSpinVelocity = 0f;
+        }
+    }
+
+    private float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    private float getPuckSpeedScale() {
+        float fieldBase = Math.min(fW, fH);
+        return clamp(fieldBase / 950f, 1.15f, 1.75f);
+    }
+
     private class GameThread extends Thread {
         private volatile boolean running = true;
         @Override
@@ -371,6 +418,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             case PLAYING:
                 int result = engine.update(puck, mallets);
+                updatePuckRotation();
                 updatePuckGradient();
                 recordReplayFrame(now);
                 if (result == 1) { scores[0]++; lastScorer = 1; creditGoal(result); onGoal(); }
@@ -405,6 +453,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void onGoal() {
+        playGoalSound();
         ReplayData.Goal replay = buildGoalReplay();
         if (!replay.frames.isEmpty()) {
             goalReplays.add(replay);
@@ -417,6 +466,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             state = GameState.GOAL;
             goalDisplayTime = System.currentTimeMillis();
         }
+    }
+
+    private void playGoalSound() {
+        if (soundPool == null || soundGoalId == 0) return;
+        float volume = AudioSettings.getSfxVolume(getContext());
+        soundPool.play(soundGoalId, volume, volume, 1, 0, 1.0f);
     }
 
     private void recordReplayFrame(long now) {
@@ -482,6 +537,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         float cx = fLeft + fW / 2f;
         float cy = fTop  + fH / 2f;
         puck.reset(cx, cy);
+        puck.setSpeedScale(getPuckSpeedScale());
+        puckRotationDegrees = 0f;
+        puckSpinVelocity = 0f;
+        puckSpinDirection = 1f;
         if (mode == MODE_2P) {
             mallets[0].reset(fLeft + fW * 0.18f, cy);
             mallets[1].reset(fLeft + fW * 0.82f, cy);
@@ -550,7 +609,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void drawPuck(Canvas canvas) {
-        drawPuckAt(canvas, puck.x, puck.y, puck.radius, paintPuck);
+        drawPuckAt(canvas, puck.x, puck.y, puck.radius, paintPuck, puckRotationDegrees);
     }
 
     private void drawReplayFrame(Canvas canvas, ReplayData.Frame frame) {
@@ -558,7 +617,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         for (int i = 0; i < malletCount && i < paintMallets.length; i++) {
             drawMalletAt(canvas, frame.malletX[i] * W, frame.malletY[i] * H, malletRadius, paintMallets[i], i);
         }
-        drawPuckAt(canvas, frame.puckX * W, frame.puckY * H, puckRadius, paintPuck);
+        drawPuckAt(canvas, frame.puckX * W, frame.puckY * H, puckRadius, paintPuck, 0f);
     }
 
     private void drawMalletAt(Canvas canvas, float x, float y, float radius, Paint paint, int malletIndex) {
@@ -592,11 +651,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return bitmaps[malletIndex % bitmaps.length];
     }
 
-    private void drawPuckAt(Canvas canvas, float x, float y, float radius, Paint paint) {
+    private void drawPuckAt(Canvas canvas, float x, float y, float radius, Paint paint, float rotationDegrees) {
         canvas.drawCircle(x + 5, y + 5, radius, paintShadow);
         if (puckBitmap != null) {
             RectF dst = new RectF(x - radius, y - radius, x + radius, y + radius);
+            canvas.save();
+            canvas.rotate(rotationDegrees, x, y);
             canvas.drawBitmap(puckBitmap, null, dst, null);
+            canvas.restore();
             return;
         }
         canvas.drawCircle(x, y, radius, paint);

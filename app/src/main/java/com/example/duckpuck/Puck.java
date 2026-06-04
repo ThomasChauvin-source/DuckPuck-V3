@@ -6,11 +6,13 @@ public class Puck {
     public float vx, vy;
     public float radius;
 
-    private static final float FAST_FRICTION = 0.992f;
-    private static final float SLOW_FRICTION = 0.985f;
-    private static final float STOP_SPEED = 0.08f;
-    private static final float MAX_SPEED = 32f;
-    private static final float SPEED_MULTIPLIER = 1.12f;
+    private static final float FAST_FRICTION = 0.994f;
+    private static final float SLOW_FRICTION = 0.989f;
+    private static final float STOP_SPEED = 0.10f;
+    private static final float BASE_MAX_SPEED = 46f;
+    private static final float BASE_SPEED_MULTIPLIER = 1.34f;
+
+    private float speedScale = 1f;
 
     public Puck(float x, float y, float radius) {
         this.x = x;
@@ -21,8 +23,8 @@ public class Puck {
     }
 
     public void update() {
-        x += vx * SPEED_MULTIPLIER;
-        y += vy * SPEED_MULTIPLIER;
+        x += vx * BASE_SPEED_MULTIPLIER * speedScale;
+        y += vy * BASE_SPEED_MULTIPLIER * speedScale;
 
         float speed = getSpeed();
         float friction = speed > 12f ? FAST_FRICTION : SLOW_FRICTION;
@@ -49,15 +51,21 @@ public class Puck {
         clampSpeed();
     }
 
+    public void setSpeedScale(float speedScale) {
+        this.speedScale = Math.max(1f, Math.min(1.75f, speedScale));
+        clampSpeed();
+    }
+
     public float getSpeed() {
         return (float) Math.sqrt(vx * vx + vy * vy);
     }
 
     public void clampSpeed() {
         float speed = getSpeed();
-        if (speed > MAX_SPEED) {
-            vx = (vx / speed) * MAX_SPEED;
-            vy = (vy / speed) * MAX_SPEED;
+        float maxSpeed = BASE_MAX_SPEED * speedScale;
+        if (speed > maxSpeed) {
+            vx = (vx / speed) * maxSpeed;
+            vy = (vy / speed) * maxSpeed;
         }
     }
 }

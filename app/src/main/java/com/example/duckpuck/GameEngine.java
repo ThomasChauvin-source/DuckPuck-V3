@@ -14,12 +14,12 @@ public class GameEngine {
     private float goalWidth;
     private RectF[] customWalls = new RectF[0];
 
-    private static final float WALL_RESTITUTION = 0.94f;
-    private static final float WALL_TANGENT_DAMPING = 0.985f;
-    private static final float MALLET_RESTITUTION = 0.88f;
-    private static final float MALLET_TRANSFER = 0.45f;
-    private static final float MALLET_SPIN_TRANSFER = 0.12f;
-    private static final float MIN_HIT_BOOST = 4.2f;
+    private static final float WALL_RESTITUTION = 0.96f;
+    private static final float WALL_TANGENT_DAMPING = 0.992f;
+    private static final float MALLET_RESTITUTION = 1.08f;
+    private static final float MALLET_TRANSFER = 0.64f;
+    private static final float MALLET_SPIN_TRANSFER = 0.16f;
+    private static final float MIN_HIT_BOOST = 7.5f;
 
     public GameEngine(float fLeft, float fRight, float fTop, float fBottom, float goalWidth) {
         this.fLeft     = fLeft;
@@ -132,24 +132,43 @@ public class GameEngine {
         float dy   = puck.y - mallet.y;
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
         float minD = puck.radius + mallet.radius;
+        boolean sweptHit = false;
 
-        if (dist >= minD || dist <= 0) return;
+        if (dist >= minD || dist <= 0) {
+            float hitX = mallet.x;
+            float hitY = mallet.y;
+            float moveX = mallet.x - mallet.prevX;
+            float moveY = mallet.y - mallet.prevY;
+            float moveLenSq = moveX * moveX + moveY * moveY;
+            if (moveLenSq <= 0f) return;
+
+            float t = ((puck.x - mallet.prevX) * moveX + (puck.y - mallet.prevY) * moveY) / moveLenSq;
+            t = clamp(t, 0f, 1f);
+            hitX = mallet.prevX + moveX * t;
+            hitY = mallet.prevY + moveY * t;
+            dx = puck.x - hitX;
+            dy = puck.y - hitY;
+            dist = (float) Math.sqrt(dx * dx + dy * dy);
+            if (dist >= minD || dist <= 0) return;
+
+            sweptHit = true;
+        }
 
         float nx = dx / dist;
         float ny = dy / dist;
 
-        float overlap = minD - dist;
+        float overlap = (minD - dist) + (sweptHit ? puck.radius * 0.35f : 0f);
         puck.x += nx * overlap;
         puck.y += ny * overlap;
 
-        float mvx  = clamp(mallet.getVelocityX(), -24f, 24f);
-        float mvy  = clamp(mallet.getVelocityY(), -24f, 24f);
+        float mvx  = clamp(mallet.getVelocityX(), -34f, 34f);
+        float mvy  = clamp(mallet.getVelocityY(), -34f, 34f);
         float malletSpeed = (float) Math.sqrt(mvx * mvx + mvy * mvy);
         float relVn = (puck.vx - mvx) * nx + (puck.vy - mvy) * ny;
 
-        if (relVn < 0 || malletSpeed > 0.8f) {
+        if (relVn < 0 || malletSpeed > 0.45f || sweptHit) {
             float approach = Math.max(0f, -relVn);
-            float impulse = Math.max(MIN_HIT_BOOST, approach * (1f + MALLET_RESTITUTION));
+            float impulse = Math.max(MIN_HIT_BOOST, approach * (1f + MALLET_RESTITUTION) + malletSpeed * 0.22f);
             float tangentX = -ny;
             float tangentY = nx;
             float tangentSpeed = mvx * tangentX + mvy * tangentY;
