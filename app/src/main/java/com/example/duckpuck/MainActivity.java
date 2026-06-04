@@ -1,6 +1,8 @@
 package com.example.duckpuck;
 
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +12,8 @@ import androidx.navigation.fragment.NavHostFragment;
 public class MainActivity extends AppCompatActivity {
 
     private MediaPlayer mediaPlayer;
+    private SoundPool menuSoundPool;
+    private int menuClickSoundId;
     private NavController navController;
 
     @Override
@@ -24,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
             applyMusicVolume();
             mediaPlayer.start();
         }
+        initMenuClickSound();
 
         // Récupération propre du NavController
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
@@ -41,12 +46,36 @@ public class MainActivity extends AppCompatActivity {
 
         // Navigation sécurisée utilisant les ID du nav_graph.xml
         if (navController != null) {
-            btnJouer.setOnClickListener(v -> navController.navigate(R.id.jouerFragment));
-            btnAjouter.setOnClickListener(v -> navController.navigate(R.id.ajouterJoueurFragment));
-            btnHistorique.setOnClickListener(v -> navController.navigate(R.id.historiqueFragment));
-            btnStatistiques.setOnClickListener(v -> navController.navigate(R.id.statistiquesFragment));
-            btnParametres.setOnClickListener(v -> navController.navigate(R.id.parametresFragment));
+            btnJouer.setOnClickListener(v -> navigateWithMenuClick(R.id.jouerFragment));
+            btnAjouter.setOnClickListener(v -> navigateWithMenuClick(R.id.ajouterJoueurFragment));
+            btnHistorique.setOnClickListener(v -> navigateWithMenuClick(R.id.historiqueFragment));
+            btnStatistiques.setOnClickListener(v -> navigateWithMenuClick(R.id.statistiquesFragment));
+            btnParametres.setOnClickListener(v -> navigateWithMenuClick(R.id.parametresFragment));
         }
+    }
+
+    private void initMenuClickSound() {
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+
+        menuSoundPool = new SoundPool.Builder()
+                .setMaxStreams(2)
+                .setAudioAttributes(audioAttributes)
+                .build();
+        menuClickSoundId = menuSoundPool.load(this, R.raw.clic_bouton_menu, 1);
+    }
+
+    private void navigateWithMenuClick(int destinationId) {
+        playMenuClickSound();
+        navController.navigate(destinationId);
+    }
+
+    private void playMenuClickSound() {
+        if (menuSoundPool == null || menuClickSoundId == 0) return;
+        float volume = AudioSettings.getSfxVolume(this);
+        menuSoundPool.play(menuClickSoundId, volume, volume, 1, 0, 1.0f);
     }
 
     @Override
@@ -85,6 +114,10 @@ public class MainActivity extends AppCompatActivity {
             }
             mediaPlayer.release();
             mediaPlayer = null;
+        }
+        if (menuSoundPool != null) {
+            menuSoundPool.release();
+            menuSoundPool = null;
         }
     }
 }
