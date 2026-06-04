@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ public class ChoixJoueursFragment extends Fragment {
     private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
     private final List<Joueur> joueurs = new ArrayList<>();
     private Spinner spinnerEq1J1, spinnerEq1J2, spinnerEq2J1, spinnerEq2J2;
+    private CheckBox checkReplay;
     private boolean joueursCharges = false;
     private boolean is2v2 = false;
 
@@ -45,15 +47,16 @@ public class ChoixJoueursFragment extends Fragment {
         spinnerEq1J2 = view.findViewById(R.id.spinnerEq1Joueur2);
         spinnerEq2J1 = view.findViewById(R.id.spinnerEq2Joueur1);
         spinnerEq2J2 = view.findViewById(R.id.spinnerEq2Joueur2);
+        checkReplay = view.findViewById(R.id.checkReplay);
         Button btnLancer = view.findViewById(R.id.btnLancerMatch);
 
         is2v2 = getArguments() != null && getArguments().getBoolean("is2v2", false);
 
         if (is2v2) {
-            TextView labelEq1J2 = view.findViewById(R.id.labelEq1Joueur2);
-            TextView labelEq2J2 = view.findViewById(R.id.labelEq2Joueur2);
-            labelEq1J2.setVisibility(View.VISIBLE);
-            labelEq2J2.setVisibility(View.VISIBLE);
+            //TextView labelEq1J2 = view.findViewById(R.id.labelEq1Joueur2);
+            //TextView labelEq2J2 = view.findViewById(R.id.labelEq2Joueur2);
+            //labelEq1J2.setVisibility(View.VISIBLE);
+            //labelEq2J2.setVisibility(View.VISIBLE);
             spinnerEq1J2.setVisibility(View.VISIBLE);
             spinnerEq2J2.setVisibility(View.VISIBLE);
         }
@@ -150,6 +153,7 @@ public class ChoixJoueursFragment extends Fragment {
 
         Intent intent = new Intent(requireContext(), GameActivity.class);
         intent.putExtra(GameActivity.EXTRA_MODE, is2v2 ? GameView.MODE_4P : GameView.MODE_2P);
+        intent.putExtra(GameActivity.EXTRA_REPLAY_ENABLED, checkReplay.isChecked());
         intent.putExtra(GameActivity.EXTRA_EQUIPE_1_IDS, equipe1Ids);
         intent.putExtra(GameActivity.EXTRA_EQUIPE_2_IDS, equipe2Ids);
         startActivity(intent);

@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 public class GameActivity extends AppCompatActivity implements GameView.GameListener {
 
     public static final String EXTRA_MODE = "game_mode";
+    public static final String EXTRA_REPLAY_ENABLED = "replay_enabled";
     public static final String EXTRA_EQUIPE_1_IDS = "equipe_1_ids";
     public static final String EXTRA_EQUIPE_2_IDS = "equipe_2_ids";
 
@@ -34,8 +35,9 @@ public class GameActivity extends AppCompatActivity implements GameView.GameList
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         int mode = getIntent().getIntExtra(EXTRA_MODE, GameView.MODE_2P);
+        boolean replayEnabled = getIntent().getBooleanExtra(EXTRA_REPLAY_ENABLED, true);
 
-        gameView = new GameView(this, mode);
+        gameView = new GameView(this, mode, replayEnabled);
         gameView.setGameListener(this);
         startTimeMillis = System.currentTimeMillis();
         setContentView(gameView);

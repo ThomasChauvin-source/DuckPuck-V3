@@ -113,6 +113,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int[] malletPointerIds;
     private int[] playerGoals;
     private int lastHitMalletIndex = -1;
+    private final boolean replayEnabled;
     private final ArrayDeque<ReplayData.Frame> replayBuffer = new ArrayDeque<>();
     private final ArrayList<ReplayData.Goal> goalReplays = new ArrayList<>();
     private List<ReplayData.Frame> activeReplayFrames = new ArrayList<>();
@@ -129,8 +130,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private final android.os.Handler mainHandler = new android.os.Handler(android.os.Looper.getMainLooper());
 
     public GameView(Context context, int mode) {
+        this(context, mode, true);
+    }
+
+    public GameView(Context context, int mode, boolean replayEnabled) {
         super(context);
         this.mode   = mode;
+        this.replayEnabled = replayEnabled;
         this.scores = new int[2];
         getHolder().addCallback(this);
         setFocusable(true);
@@ -420,7 +426,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 int result = engine.update(puck, mallets);
                 updatePuckRotation();
                 updatePuckGradient();
-                recordReplayFrame(now);
+                if (replayEnabled) {
+                    recordReplayFrame(now);
+                }
                 if (result == 1) { scores[0]++; lastScorer = 1; creditGoal(result); onGoal(); }
                 else if (result == 2) { scores[1]++; lastScorer = 2; creditGoal(result); onGoal(); }
                 break;
@@ -454,6 +462,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private void onGoal() {
         playGoalSound();
+        if (!replayEnabled) {
+            state = GameState.GOAL;
+            goalDisplayTime = System.currentTimeMillis();
+            return;
+        }
+
         ReplayData.Goal replay = buildGoalReplay();
         if (!replay.frames.isEmpty()) {
             goalReplays.add(replay);
@@ -988,6 +1002,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public String getReplayData() {
+        if (!replayEnabled) return "";
         return ReplayData.toJson(goalReplays);
     }
 }

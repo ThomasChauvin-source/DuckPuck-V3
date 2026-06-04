@@ -10,11 +10,11 @@
         android:src="@drawable/backbois2"
         android:scaleType="fitXY" />
 
-    <!-- Contenu -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:padding="70dp"
         android:paddingLeft="60dp"
         android:paddingTop="40dp"
         android:paddingRight="65dp"
@@ -32,7 +32,7 @@
             android:textSize="26sp"
             android:textStyle="bold" />
 
-        <!-- Équipes -->
+        <!-- Conteneur équipes -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -43,11 +43,11 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/backautrebois"
+                android:background="@drawable/autrecouleurbois"
                 android:orientation="vertical"
-                android:padding="25dp">
+                android:padding="12dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -62,13 +62,13 @@
                     android:id="@+id/spinnerEq1Joueur1"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <Spinner
                     android:id="@+id/spinnerEq1Joueur2"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <Spinner
                     android:id="@+id/spinnerEq1Joueur3"
@@ -84,7 +84,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/backautrebois"
                 android:orientation="vertical"
-                android:padding="25dp">
+                android:padding="12dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -99,13 +99,13 @@
                     android:id="@+id/spinnerEq2Joueur1"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <Spinner
                     android:id="@+id/spinnerEq2Joueur2"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginBottom="10dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <Spinner
                     android:id="@+id/spinnerEq2Joueur3"
@@ -116,35 +116,16 @@
 
         </LinearLayout>
 
-        <!-- Bouton IMAGE -->
-        <FrameLayout
+        <!-- Bouton -->
+        <Button
+            android:id="@+id/btnCommencer"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:layout_marginTop="20dp">
-
-            <!-- Image du bouton (CORRIGÉ) -->
-            <ImageView
-                android:id="@+id/btnCommencer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/blancboutton"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="Commencer le match" />
-
-            <!-- Texte sur le bouton -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="COMMENCER LE MATCH"
-                android:textColor="#2B1E1E"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-
-        </FrameLayout>
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#E60012"
+            android:text="COMMENCER LE MATCH"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
