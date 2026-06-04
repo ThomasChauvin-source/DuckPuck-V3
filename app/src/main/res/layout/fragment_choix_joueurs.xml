@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Fond principal -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,6 +20,7 @@
         android:paddingRight="65dp"
         android:paddingBottom="40dp">
 
+        <!-- Titre -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,18 +32,20 @@
             android:textSize="26sp"
             android:textStyle="bold" />
 
+        <!-- Conteneur équipes -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
 
+            <!-- ÉQUIPE ROUGE -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:background="#22FF0000"
+                android:background="@drawable/autrecouleurbois"
                 android:orientation="vertical"
                 android:padding="12dp">
 
@@ -58,33 +62,27 @@
                     android:id="@+id/spinnerEq1Joueur1"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="#33FFFFFF" />
-
-                <TextView
-                    android:id="@+id/labelEq1Joueur2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp"
-                    android:text="Joueur 2"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
+                    android:layout_marginBottom="8dp" />
 
                 <Spinner
                     android:id="@+id/spinnerEq1Joueur2"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:background="#33FFFFFF"
-                    android:visibility="gone" />
+                    android:layout_marginBottom="8dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerEq1Joueur3"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp" />
+
             </LinearLayout>
 
+            <!-- ÉQUIPE BLEUE -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:background="#220000FF"
+                android:background="@drawable/bac"
                 android:orientation="vertical"
                 android:padding="12dp">
 
@@ -101,39 +99,32 @@
                     android:id="@+id/spinnerEq2Joueur1"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="#33FFFFFF" />
-
-                <TextView
-                    android:id="@+id/labelEq2Joueur2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp"
-                    android:text="Joueur 2"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
+                    android:layout_marginBottom="8dp" />
 
                 <Spinner
                     android:id="@+id/spinnerEq2Joueur2"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:background="#33FFFFFF"
-                    android:visibility="gone" />
+                    android:layout_marginBottom="8dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerEq2Joueur3"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp" />
+
             </LinearLayout>
 
         </LinearLayout>
 
+        <!-- Bouton -->
         <Button
-            android:id="@+id/btnLancerMatch"
+            android:id="@+id/btnCommencer"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#FB011A"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#E60012"
             android:text="COMMENCER LE MATCH"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
