@@ -2,4 +2,27 @@
     <string name="app_name">DuckPuck</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="historique_des_matches">Historique des Matches</string>
+    <string name="aucune_partie_jou_e_pour_le_moment">Aucune partie jouée pour le moment</string>
+    <string name="_1_v_1_10_classique">1 V 1\n(Classique)</string>
+    <string name="_2_v_2_10_quipe">2 V 2\n(Équipe)</string>
+    <string name="duck_puck">Duck Puck</string>
+    <string name="parametres">Parametres</string>
+    <string name="statistiques">Statistiques</string>
+    <string name="aucun_joueur_enregistre">Aucun joueur enregistre</string>
+    <string name="meilleurs_buteurs">Meilleurs buteurs</string>
+    <string name="plus_grands_joueurs">Plus grands joueurs</string>
+    <string name="stats_perso">Stats perso</string>
+    <string name="jouer">Jouer</string>
+    <string name="ajouter_joueur">Ajouter Joueur</string>
+    <string name="historique">Historique</string>
+    <string name="param_tres">Paramètres</string>
+    <string name="nouveau_joueur">Nouveau Joueur</string>
+    <string name="nom_du_joueur">Nom du joueur :</string>
+    <string name="valider">VALIDER</string>
+    <string name="qui_va_jouer">Qui va jouer ?</string>
+    <string name="quipe_rouge">ÉQUIPE ROUGE</string>
+    <string name="quipe_bleue">ÉQUIPE BLEUE</string>
+    <string name="activer_les_replays">Activer les replays</string>
+    <string name="commencer_le_match">COMMENCER LE MATCH</string>
 </resources>

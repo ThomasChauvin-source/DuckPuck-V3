@@ -1,117 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/backbois2"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:src="@drawable/backbois2" />
 
-    <LinearLayout
+    <com.example.duckpuck.AssetPanelLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="18dp"
-        android:background="@drawable/bg_duck_panel"
-        android:orientation="vertical"
-        android:paddingLeft="44dp"
-        android:paddingTop="30dp"
-        android:paddingRight="44dp"
-        android:paddingBottom="30dp">
+        app:assetInsetStyle="wood_panel">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="serif"
-            android:gravity="center"
-            android:text="Statistiques"
-            android:textColor="#FFE08A"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvAucunJoueur"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Aucun joueur enregistre"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:visibility="gone" />
-
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fadeScrollbars="false">
+            android:background="@drawable/bg_duck_panel"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/stats_panel_padding_h"
+            android:paddingTop="@dimen/stats_panel_padding_v"
+            android:paddingRight="@dimen/stats_panel_padding_h"
+            android:paddingBottom="@dimen/stats_panel_padding_v">
 
-            <LinearLayout
-                android:id="@+id/listeStats"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/statistiques"
+                android:textColor="#FFE08A"
+                android:textSize="@dimen/stats_header_text_size"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Meilleurs buteurs"
-                    android:textColor="#FFE08A"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvAucunJoueur"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/aucun_joueur_enregistre"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/subtitle_text_size"
+                android:visibility="gone" />
 
-                <LinearLayout
-                    android:id="@+id/listeTopButeurs"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="Plus grands joueurs"
-                    android:textColor="#FFE08A"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fadeScrollbars="false">
 
                 <LinearLayout
-                    android:id="@+id/listeTopParties"
+                    android:id="@+id/listeStats"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="Stats perso"
-                    android:textColor="#FFE08A"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/meilleurs_buteurs"
+                        android:textColor="#FFE08A"
+                        android:textSize="@dimen/section_title_text_size"
+                        android:textStyle="bold" />
 
-                <Spinner
-                    android:id="@+id/spinnerJoueurStats"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_duck_spinner" />
+                    <LinearLayout
+                        android:id="@+id/listeTopButeurs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
 
-                <TextView
-                    android:id="@+id/tvStatsPerso"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_duck_row_alt"
-                    android:padding="16dp"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/plus_grands_joueurs"
+                        android:textColor="#FFE08A"
+                        android:textSize="@dimen/section_title_text_size"
+                        android:textStyle="bold" />
 
-            </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/listeTopParties"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
 
-        </ScrollView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/stats_perso"
+                        android:textColor="#FFE08A"
+                        android:textSize="@dimen/section_title_text_size"
+                        android:textStyle="bold" />
 
-    </LinearLayout>
+                    <Spinner
+                        android:id="@+id/spinnerJoueurStats"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spinner_height"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_duck_spinner" />
 
+                    <TextView
+                        android:id="@+id/tvStatsPerso"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_duck_row_alt"
+                        android:padding="16dp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/body_text_size" />
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+    </com.example.duckpuck.AssetPanelLayout>
 </FrameLayout>

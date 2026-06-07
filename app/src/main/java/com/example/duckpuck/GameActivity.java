@@ -1,6 +1,7 @@
 package com.example.duckpuck;
 
 import android.app.AlertDialog;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -20,6 +21,7 @@ public class GameActivity extends AppCompatActivity implements GameView.GameList
     public static final String EXTRA_EQUIPE_2_IDS = "equipe_2_ids";
 
     private GameView gameView;
+    private MediaPlayer mediaPlayer;
     private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
     private long startTimeMillis;
     private boolean partieSauvegardee = false;
@@ -41,24 +43,55 @@ public class GameActivity extends AppCompatActivity implements GameView.GameList
         gameView.setGameListener(this);
         startTimeMillis = System.currentTimeMillis();
         setContentView(gameView);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.menu);
+        if (mediaPlayer != null) {
+            mediaPlayer.setLooping(true);
+            applyMusicVolume();
+            mediaPlayer.start();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
         gameView.pauseGame();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        applyMusicVolume();
+        if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
         gameView.resumeGame();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mediaPlayer != null) {
+            try {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+            } catch (IllegalStateException e) {
+                // Ignore
+            }
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
         dbExecutor.shutdown();
+    }
+
+    private void applyMusicVolume() {
+        if (mediaPlayer == null) return;
+        float volume = AudioSettings.getMusicVolume(this);
+        mediaPlayer.setVolume(volume, volume);
     }
 
     @Override
@@ -214,6 +247,7 @@ public class GameActivity extends AppCompatActivity implements GameView.GameList
 
         seekMusique.setOnSeekBarChangeListener(new VolumeSeekBarListener(progress -> {
             AudioSettings.setMusicVolume(this, progress / 100f);
+            applyMusicVolume();
             updateVolumeLabel(tvMusique, "Musique", progress);
         }));
         seekBruitage.setOnSeekBarChangeListener(new VolumeSeekBarListener(progress -> {

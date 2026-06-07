@@ -1,7 +1,9 @@
 package com.example.duckpuck;
 
-import android.os.Bundle;
+import static android.content.Intent.getIntent;import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,18 +46,44 @@ public class ReplayActivity extends AppCompatActivity {
 
     private void showReplay(List<ReplayData.Goal> goals) {
         if (goals == null || goals.isEmpty()) {
+            FrameLayout layout = new FrameLayout(this);
+            layout.setBackgroundColor(0xFF0A3D6B);
+
             TextView empty = new TextView(this);
             empty.setText("Aucun replay disponible");
             empty.setTextColor(0xFFFFFFFF);
             empty.setTextSize(22f);
             empty.setGravity(android.view.Gravity.CENTER);
-            empty.setBackgroundColor(0xFF0A3D6B);
-            setContentView(empty);
+            FrameLayout.LayoutParams tvParams = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT);
+            layout.addView(empty, tvParams);
+
+            addBackButton(layout);
+            setContentView(layout);
             return;
         }
 
         replayView = new ReplayView(this, goals);
-        setContentView(replayView);
+        FrameLayout layout = new FrameLayout(this);
+        layout.addView(replayView);
+        addBackButton(layout);
+        setContentView(layout);
+    }
+
+    private void addBackButton(FrameLayout parent) {
+        Button btnBack = new Button(this);
+        btnBack.setText("← Retour");
+        btnBack.setTextColor(0xFFFFFFFF);
+        btnBack.setBackgroundColor(0xCC000000);
+        btnBack.setOnClickListener(v -> finish());
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = android.view.Gravity.TOP | android.view.Gravity.START;
+        params.setMargins(16, 48, 0, 0);
+        parent.addView(btnBack, params);
     }
 
     @Override

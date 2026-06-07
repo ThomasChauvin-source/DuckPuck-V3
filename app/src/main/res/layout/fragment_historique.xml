@@ -1,52 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/backbois2"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:src="@drawable/backbois2" />
 
-    <LinearLayout
+    <com.example.duckpuck.AssetPanelLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        app:assetInsetStyle="wood_panel">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Historique des Matches"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:fontFamily="serif"
-            android:gravity="center"
-            android:layout_marginBottom="16dp" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvAucunePartie"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Aucune partie jouée pour le moment"
-            android:textColor="#CCCCCC"
-            android:gravity="center"
-            android:visibility="gone" />
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:id="@+id/listeParties"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:layout_marginBottom="16dp"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/historique_des_matches"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/historique_header_text_size"
+                android:textStyle="bold" />
 
-        </ScrollView>
+            <TextView
+                android:id="@+id/tvAucunePartie"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/aucune_partie_jou_e_pour_le_moment"
+                android:textColor="#CCCCCC"
+                android:visibility="gone" />
 
-    </LinearLayout>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
+                <LinearLayout
+                    android:id="@+id/listeParties"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </ScrollView>
+
+        </LinearLayout>
+
+    </com.example.duckpuck.AssetPanelLayout>
 </FrameLayout>

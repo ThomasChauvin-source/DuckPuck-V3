@@ -31,7 +31,7 @@
             android:layout_marginBottom="12dp"
             android:padding="14dp"
             android:fontFamily="serif"
-            android:text="Jouer"
+            android:text="@string/jouer"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:background="@drawable/bg_btn_selector" />
@@ -43,7 +43,7 @@
             android:layout_marginBottom="12dp"
             android:padding="14dp"
             android:fontFamily="serif"
-            android:text="Ajouter Joueur"
+            android:text="@string/ajouter_joueur"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:background="@drawable/bg_btn_selector" />
@@ -55,7 +55,7 @@
             android:layout_marginBottom="12dp"
             android:padding="14dp"
             android:fontFamily="serif"
-            android:text="Historique"
+            android:text="@string/historique"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:background="@drawable/bg_btn_selector" />
@@ -67,7 +67,7 @@
             android:layout_marginBottom="12dp"
             android:padding="14dp"
             android:fontFamily="serif"
-            android:text="Statistiques"
+            android:text="@string/statistiques"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:background="@drawable/bg_btn_selector" />
@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:padding="14dp"
             android:fontFamily="serif"
-            android:text="Paramètres"
+            android:text="@string/param_tres"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:background="@drawable/bg_btn_selector" />

@@ -106,8 +106,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private RectF   screenRect;
 
     private RectF hudBox1, hudBox2, hudBox3, hudBox4;
+    private RectF pauseButtonRect;
     private RectF btnResume, btnSettings, btnQuit;
     private float hudCY;
+
+    private static final float HUD_PANEL_INSET_RATIO = 0.08f;
+    private static final float PAUSE_ICON_SIZE_RATIO = 0.52f;
 
     private GameThread gameThread;
     private int[] malletPointerIds;
@@ -284,6 +288,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         hudBox2 = new RectF(W * HUD_BOX2_L, hudY1, W * HUD_BOX2_R, hudY2);
         hudBox3 = new RectF(W * HUD_BOX3_L, hudY1, W * HUD_BOX3_R, hudY2);
         hudBox4 = new RectF(W * HUD_BOX4_L, hudY1, W * HUD_BOX4_R, hudY2);
+        pauseButtonRect = buildPauseButtonRect(hudBox4);
 
         float cx = fLeft + fW / 2f;
         float cy = fTop  + fH / 2f;
@@ -687,11 +692,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         drawCenterPanel(canvas, hudBox2, paletsLeft, boxH, hudCYr);
         drawScorePanel(canvas, hudBox3, "BLEU", scores[1], COLOR_P2, boxH, hudCYr);
 
-        drawPauseButton(canvas, hudBox4, hudCYr, boxH);
+        drawPauseButton(canvas, pauseButtonRect);
+    }
+
+    private RectF buildPauseButtonRect(RectF slot) {
+        float inset = slot.height() * HUD_PANEL_INSET_RATIO;
+        float size = slot.height() - inset * 2f;
+        float right = slot.right - inset;
+        float top = slot.top + inset;
+        return new RectF(right - size, top, right, top + size);
     }
 
     private void drawScorePanel(Canvas canvas, RectF box, String label, int score, int color, float boxH, float cy) {
-        RectF panel = insetRect(box, boxH * 0.08f);
+        RectF panel = insetRect(box, boxH * HUD_PANEL_INSET_RATIO);
         drawHudPanel(canvas, panel);
 
         paintHudAccent.setColor(color);
@@ -708,7 +721,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void drawCenterPanel(Canvas canvas, RectF box, int paletsLeft, float boxH, float cy) {
-        RectF panel = insetRect(box, boxH * 0.08f);
+        RectF panel = insetRect(box, boxH * HUD_PANEL_INSET_RATIO);
         drawHudPanel(canvas, panel);
 
         paintHudSub.setTextSize(boxH * 0.18f);
@@ -732,30 +745,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return new RectF(rect.left + inset, rect.top + inset, rect.right - inset, rect.bottom - inset);
     }
 
-    private void drawPauseButton(Canvas canvas, RectF box, float cy, float boxH) {
-        float cx = box.centerX();
-        float pad = boxH * 0.12f;
-        RectF panel = new RectF(box.left + pad, box.top + pad, box.right - pad, box.bottom - pad);
+    private void drawPauseButton(Canvas canvas, RectF panel) {
+        if (panel == null) return;
+
         drawHudPanel(canvas, panel);
 
-        if (state == GameState.PAUSED) {
-            paintHudText.setTextSize(boxH * 0.55f);
-            paintHudText.setColor(0xFF00FF88);
-            paintHudText.setTextSize(boxH * 0.46f);
-            canvas.drawText(">", cx, cy + boxH * 0.18f, paintHudText);
-            paintHudText.setTextSize(1f);
-            paintHudText.setColor(0x00000000);
-            canvas.drawText("▶", cx, cy + boxH * 0.22f, paintHudText);
-        } else {
-            paintHudText.setTextSize(boxH * 0.55f);
-            paintHudText.setColor(Color.WHITE);
-            paintHudText.setTextSize(boxH * 0.38f);
-            paintHudText.setColor(0xFFFFE08A);
-            canvas.drawText("II", cx, cy + boxH * 0.14f, paintHudText);
-            paintHudText.setTextSize(1f);
-            paintHudText.setColor(0x00000000);
-            canvas.drawText("⏸", cx, cy + boxH * 0.22f, paintHudText);
-        }
+        String icon = state == GameState.PAUSED ? "▶" : "⏸";
+        paintHudText.setTextSize(panel.height() * PAUSE_ICON_SIZE_RATIO);
+        paintHudText.setColor(state == GameState.PAUSED ? 0xFF00FF88 : 0xFFFFE08A);
+
+        Paint.FontMetrics metrics = paintHudText.getFontMetrics();
+        float textY = panel.centerY() - (metrics.ascent + metrics.descent) / 2f;
+        canvas.drawText(icon, panel.centerX(), textY, paintHudText);
     }
 
     private void drawOverlay(Canvas canvas) {
@@ -830,7 +831,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         float ty = event.getY(pointerIndex);
 
         if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
-            if (hudBox4 != null && hudBox4.contains(tx, ty)) {
+            if (pauseButtonRect != null && pauseButtonRect.contains(tx, ty)) {
                 togglePause();
                 return true;
             }

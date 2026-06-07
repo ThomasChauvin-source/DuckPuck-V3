@@ -1,62 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/backbois2"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:src="@drawable/backbois2" />
 
-    <LinearLayout
+    <com.example.duckpuck.AssetPanelLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingLeft="60dp"
-        android:paddingTop="40dp"
-        android:paddingRight="65dp">
+        app:assetInsetStyle="wood_panel">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp"
-            android:fontFamily="serif"
-            android:gravity="center"
-            android:text="Parametres"
-            android:textColor="#FFFFFF"
-            android:textSize="26sp"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvVolumeMusique"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="28dp"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/parametres"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/title_text_size"
+                android:textStyle="bold" />
 
-        <SeekBar
-            android:id="@+id/seekVolumeMusique"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp"
-            android:max="100" />
+            <TextView
+                android:id="@+id/tvVolumeMusique"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/section_title_text_size"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvVolumeBruitage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <SeekBar
+                android:id="@+id/seekVolumeMusique"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="28dp"
+                android:max="100" />
 
-        <SeekBar
-            android:id="@+id/seekVolumeBruitage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100" />
+            <TextView
+                android:id="@+id/tvVolumeBruitage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/section_title_text_size"
+                android:textStyle="bold" />
 
-    </LinearLayout>
+            <SeekBar
+                android:id="@+id/seekVolumeBruitage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100" />
 
+        </LinearLayout>
+
+    </com.example.duckpuck.AssetPanelLayout>
 </FrameLayout>

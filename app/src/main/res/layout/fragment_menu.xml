@@ -12,28 +12,35 @@
         android:scaleType="fitXY"
         app:srcCompat="@drawable/backbois2" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="vertical">
+    <com.example.duckpuck.AssetPanelLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:assetInsetStyle="wood_panel">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="serif"
-            android:text="Duck Puck"
-            android:textColor="#FFFFFF"
-            android:textSize="36sp"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Sélectionnez une option dans le menu de gauche"
-            android:textColor="#CCFFFFFF"
-            android:textSize="18sp" />
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="serif"
+                android:text="@string/duck_puck"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/home_title_text_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/menu_hint"
+                android:textColor="#CCFFFFFF"
+                android:textSize="@dimen/subtitle_text_size" />
+        </LinearLayout>
+
+    </com.example.duckpuck.AssetPanelLayout>
 </FrameLayout>
